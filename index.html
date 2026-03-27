@@ -568,7 +568,7 @@ async function saveSession(row){
       presenca: presenca,
       evolucao: evolucao,
       registro: [
-        "", // ID (Apps Script pode ignorar ou calcular depois)
+        "",
         sess.date,
         fmtT(sess.tStart),
         fmtT(sess.tEnd),
@@ -585,22 +585,30 @@ async function saveSession(row){
     };
 
     const res = await fetch("https://script.google.com/macros/s/AKfycbwPyLn3IItc17PO-67etjsTBvAl6p-T0WCKYby5--S_oafiMdEd3EWoqQLoAAwKt7hm/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(payload)
-});
-
-const data = await res.json();
-
-if (data.status === "ok") {
-  lockCard(row,presenca,evolucao);
-  showToast('✅ Sessão salva com sucesso!');
-} else {
-  throw new Error(data.error || "Erro desconhecido");
-}
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
     });
+
+    const data = await res.json();
+
+    if (data.status === "ok") {
+      lockCard(row,presenca,evolucao);
+      showToast('✅ Sessão salva com sucesso!');
+    } else {
+      throw new Error(data.error || "Erro desconhecido");
+    }
+
+  }catch(e){
+    if(sv){
+      sv.classList.remove('sving');
+      sv.innerHTML='<span>💾</span> Salvar sessão';
+    }
+    showToast('Erro ao salvar: '+e.message);
+  }
+}
 
 function lockCard(row,presenca,evolucao){
   const sess=sessions.find(s=>s.row===row);
