@@ -11,1070 +11,666 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --green-900: #0F4C3A;
-    --green-800: #155c48;
-    --green-700: #1a6e55;
-    --green-500: #27a37c;
-    --green-300: #6fcfae;
-    --green-100: #d4f0e7;
-    --green-50:  #edfaf5;
-    --sand-100: #f5f1eb;
-    --sand-200: #ede7dc;
-    --sand-300: #d9d0c3;
-    --text-primary: #1a1a18;
-    --text-secondary: #5a5a56;
-    --text-muted: #9a9a94;
-    --surface: #ffffff;
-    --surface-2: #faf9f7;
-    --border: #e8e4de;
-    --radius: 16px;
-    --radius-sm: 10px;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-    --shadow: 0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.04);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
-  }
+:root {
+  --g900:#0F4C3A;--g800:#155c48;--g700:#1a6e55;--g500:#27a37c;--g300:#6fcfae;--g100:#d4f0e7;--g50:#edfaf5;
+  --s100:#f5f1eb;--s200:#ede7dc;--s300:#d9d0c3;
+  --tp:#1a1a18;--ts:#5a5a56;--tm:#9a9a94;
+  --sur:#ffffff;--sur2:#faf9f7;--bdr:#e8e4de;
+  --r:16px;--rsm:10px;
+  --sh0:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --sh:0 4px 16px rgba(0,0,0,.08),0 1px 4px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--s100);color:var(--tp);min-height:100dvh;max-width:430px;margin:0 auto;overflow-x:hidden}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+/* HEADER */
+.hdr{background:var(--g900);color:white;padding:20px 20px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(15,76,58,.25)}
+.htop{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.atitle{font-family:'DM Serif Display',serif;font-size:22px;letter-spacing:-.3px;line-height:1}
+.atitle span{color:var(--g300);font-style:italic}
+.badge{background:var(--g700);color:var(--g100);font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;letter-spacing:.2px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--sand-100);
-    color: var(--text-primary);
-    min-height: 100dvh;
-    max-width: 430px;
-    margin: 0 auto;
-    position: relative;
-    overflow-x: hidden;
-  }
+/* DATE STRIP */
+.dstrip{display:flex;gap:6px;overflow-x:auto;padding-bottom:16px;scrollbar-width:none}
+.dstrip::-webkit-scrollbar{display:none}
+.dchip{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 14px;border-radius:var(--rsm);cursor:pointer;background:transparent;border:1.5px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);min-width:54px;font-family:'DM Sans',sans-serif;transition:all .2s}
+.dchip .dn{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.dchip .dd{font-size:20px;font-weight:300;line-height:1}
+.dchip.act{background:var(--g500);border-color:var(--g500);color:white;box-shadow:0 4px 12px rgba(39,163,124,.4)}
+.dchip.hs::after{content:'';display:block;width:4px;height:4px;border-radius:50%;background:var(--g300);margin-top:2px}
+.dchip.act.hs::after{background:rgba(255,255,255,.7)}
 
-  /* ── HEADER ── */
-  .app-header {
-    background: var(--green-900);
-    color: white;
-    padding: 20px 20px 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 12px rgba(15,76,58,.25);
-  }
-  .header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  .app-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px;
-    letter-spacing: -0.3px;
-    line-height: 1;
-  }
-  .app-title span { color: var(--green-300); font-style: italic; }
-  .header-badge {
-    background: var(--green-700);
-    color: var(--green-100);
-    font-size: 11px;
-    font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 20px;
-    letter-spacing: 0.2px;
-  }
+/* RESUMO HEADER */
+.rhdr{padding-bottom:16px}
+.rhlbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.5);margin-bottom:8px}
+.msel-row{display:flex;gap:8px;align-items:center}
+.msel,.ysel{padding:10px 12px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);border-radius:var(--rsm);color:white;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;-webkit-appearance:none;cursor:pointer}
+.msel{flex:1}
+.ysel{width:90px}
+.msel option,.ysel option{background:#1a4035;color:white}
+.ldbtn{padding:10px 16px;background:var(--g500);border:none;border-radius:var(--rsm);color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .2s}
+.ldbtn:hover{background:var(--g700)}
 
-  /* ── DATE SELECTOR ── */
-  .date-strip {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding-bottom: 16px;
-    scrollbar-width: none;
-  }
-  .date-strip::-webkit-scrollbar { display: none; }
-  .date-chip {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    padding: 8px 14px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: all .2s ease;
-    background: transparent;
-    border: 1.5px solid rgba(255,255,255,.15);
-    color: rgba(255,255,255,.6);
-    min-width: 54px;
-  }
-  .date-chip .day-name { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-  .date-chip .day-num { font-size: 20px; font-weight: 300; line-height: 1; }
-  .date-chip.active {
-    background: var(--green-500);
-    border-color: var(--green-500);
-    color: white;
-    box-shadow: 0 4px 12px rgba(39,163,124,.4);
-  }
-  .date-chip.has-sessions::after {
-    content: '';
-    display: block;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--green-300);
-    margin-top: 2px;
-  }
-  .date-chip.active.has-sessions::after { background: rgba(255,255,255,.7); }
+/* VIEWS */
+.view{padding:20px 16px 100px;display:none}
+.view.act{display:block}
 
-  /* ── MAIN CONTENT ── */
-  .main {
-    padding: 20px 16px 100px;
-  }
+/* DAY SUMMARY */
+.dsum{display:flex;gap:10px;margin-bottom:20px}
+.spill{flex:1;background:var(--sur);border-radius:var(--rsm);padding:12px 10px;text-align:center;border:1px solid var(--bdr);box-shadow:var(--sh0)}
+.spill .num{font-size:22px;font-weight:300;line-height:1;margin-bottom:2px}
+.spill .lbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.4px;color:var(--tm)}
+.spill.g .num{color:var(--g700)}
+.spill.a .num{color:#b45309}
+.spill.r .num{color:#b91c1c}
 
-  /* ── DAY SUMMARY ── */
-  .day-summary {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .summary-pill {
-    flex: 1;
-    background: var(--surface);
-    border-radius: var(--radius-sm);
-    padding: 12px 10px;
-    text-align: center;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
-  }
-  .summary-pill .num {
-    font-size: 22px;
-    font-weight: 300;
-    line-height: 1;
-    margin-bottom: 2px;
-  }
-  .summary-pill .label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); }
-  .summary-pill.green .num { color: var(--green-700); }
-  .summary-pill.amber .num { color: #b45309; }
-  .summary-pill.red .num { color: #b91c1c; }
+/* SEC LABEL */
+.slbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--tm);margin-bottom:10px}
 
-  /* ── SECTION TITLE ── */
-  .section-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--text-muted);
-    margin-bottom: 10px;
-  }
+/* PATIENT CARD */
+.plist{display:flex;flex-direction:column;gap:10px}
+.pc{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);box-shadow:var(--sh0);overflow:hidden;transition:box-shadow .2s}
+.pc:focus-within{box-shadow:var(--sh)}
 
-  /* ── PATIENT CARD ── */
-  .patient-list { display: flex; flex-direction: column; gap: 10px; }
+/* LOCKED */
+.pc.lkd{opacity:.75}
+.pc.lkd .srow,.pc.lkd .savebtn{display:none!important}
+.lkbadge{display:none;align-items:center;gap:6px;padding:6px 16px 10px;font-size:11px;font-weight:500;color:var(--tm)}
+.pc.lkd .lkbadge{display:flex}
+.pc.lkd .evoinput{pointer-events:none;background:var(--s100)!important;color:var(--ts)!important}
+.pc.lkd .expbtn{pointer-events:none}
 
-  .patient-card {
-    background: var(--surface);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
-    transition: box-shadow .2s;
-  }
-  .patient-card:focus-within { box-shadow: var(--shadow); }
+/* CARD INNER */
+.cmain{display:flex;align-items:flex-start;gap:12px;padding:14px 16px}
+.tblk{flex:0 0 auto;text-align:center;min-width:44px}
+.ts2{font-size:15px;font-weight:500;color:var(--tp);line-height:1}
+.te{font-size:11px;color:var(--tm);margin-top:1px}
+.tdot{width:6px;height:6px;border-radius:50%;background:var(--bdr);margin:4px auto 0}
+.pinfo{flex:1;min-width:0}
+.pname{font-size:15px;font-weight:500;color:var(--tp);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.pmeta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.mt{font-size:11px;font-weight:500;padding:2px 7px;border-radius:6px;background:var(--s100);color:var(--ts);border:1px solid var(--s300)}
+.si{flex:0 0 auto;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
+.si-p{background:#dcfce7}
+.si-f{background:#fee2e2}
+.si-j{background:#fef3c7}
+.si-n{background:var(--s200)}
 
-  .card-main {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px 16px;
-  }
+/* STATUS BUTTONS */
+.srow{display:flex;gap:6px;padding:0 16px 12px}
+.sbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:var(--rsm);border:1.5px solid var(--bdr);background:var(--sur2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s}
+.sbtn .ico{font-size:16px}
+.sbtn .lbl2{font-size:10px;font-weight:500;color:var(--tm);letter-spacing:.2px}
+.sbtn.sp{border-color:#16a34a;background:#f0fdf4}.sbtn.sp .lbl2{color:#16a34a}
+.sbtn.sf{border-color:#dc2626;background:#fef2f2}.sbtn.sf .lbl2{color:#dc2626}
+.sbtn.sj{border-color:#d97706;background:#fffbeb}.sbtn.sj .lbl2{color:#d97706}
 
-  .time-block {
-    flex: 0 0 auto;
-    text-align: center;
-    min-width: 44px;
-  }
-  .time-start { font-size: 15px; font-weight: 500; color: var(--text-primary); line-height: 1; }
-  .time-end { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
-  .time-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--border);
-    margin: 4px auto 0;
-  }
+/* STATUS BAR */
+.csbar{height:3px;width:100%}
+.cb-p{background:#16a34a}.cb-f{background:#dc2626}.cb-j{background:#d97706}.cb-n{background:transparent}
 
-  .patient-info { flex: 1; min-width: 0; }
-  .patient-name {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 3px;
-  }
-  .patient-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-  .meta-tag {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 2px 7px;
-    border-radius: 6px;
-    background: var(--sand-100);
-    color: var(--text-secondary);
-    border: 1px solid var(--sand-300);
-  }
+/* EVOLUTION */
+.evoarea{padding:0 16px 14px;display:none}
+.evoarea.open{display:block}
+.evolbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--tm);margin-bottom:6px}
+.evoinput{width:100%;min-height:80px;padding:10px 12px;border:1.5px solid var(--bdr);border-radius:var(--rsm);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--tp);background:var(--sur2);resize:vertical;line-height:1.5;outline:none;transition:border-color .15s}
+.evoinput:focus{border-color:var(--g500);background:var(--sur)}
+.evoinput::placeholder{color:var(--tm)}
+.savebtn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;margin-top:8px;border:none;border-radius:var(--rsm);background:var(--g900);color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .18s}
+.savebtn:hover{background:var(--g800)}
+.savebtn:active{transform:scale(.98)}
+.savebtn.sving{opacity:.7;pointer-events:none}
+.savebtn.svd{background:#16a34a}
 
-  /* ── STATUS BUTTONS ── */
-  .status-row {
-    display: flex;
-    gap: 6px;
-    padding: 0 16px 12px;
-  }
-  .status-btn {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    padding: 8px 4px;
-    border-radius: var(--radius-sm);
-    border: 1.5px solid var(--border);
-    background: var(--surface-2);
-    cursor: pointer;
-    transition: all .18s ease;
-    font-family: inherit;
-  }
-  .status-btn .icon { font-size: 16px; }
-  .status-btn .lbl { font-size: 10px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.2px; }
+/* EXPAND BUTTON */
+.expbtn{width:100%;padding:7px 16px;background:none;border:none;border-top:1px dashed var(--bdr);font-family:'DM Sans',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;text-align:left;display:flex;align-items:center;gap:4px;transition:color .15s}
+.expbtn:hover{color:var(--g700)}
+.expbtn .arr{transition:transform .2s;font-size:10px;margin-left:auto}
+.expbtn.open .arr{transform:rotate(180deg)}
 
-  .status-btn.presente { border-color: #16a34a; background: #f0fdf4; }
-  .status-btn.presente .lbl { color: #16a34a; }
+/* EMPTY */
+.empty{text-align:center;padding:48px 24px;color:var(--tm)}
+.empty-ico{font-size:40px;margin-bottom:12px;opacity:.5}
+.empty-t{font-size:15px;font-weight:500;margin-bottom:4px;color:var(--ts)}
+.empty-s{font-size:13px}
 
-  .status-btn.falta { border-color: #dc2626; background: #fef2f2; }
-  .status-btn.falta .lbl { color: #dc2626; }
+/* DEMO BANNER */
+.demobanner{background:rgba(255,193,7,.12);border:1px solid rgba(255,193,7,.35);border-radius:var(--rsm);padding:10px 14px;margin-bottom:14px;font-size:12px;color:#7a5d00;line-height:1.5}
 
-  .status-btn.justificou { border-color: #d97706; background: #fffbeb; }
-  .status-btn.justificou .lbl { color: #d97706; }
+/* RESUMO TABLE */
+.rcard{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);box-shadow:var(--sh0);overflow:hidden;margin-bottom:16px}
+.rchead{padding:14px 16px 10px;border-bottom:1px solid var(--bdr)}
+.rctitle{font-family:'DM Serif Display',serif;font-size:18px;color:var(--tp)}
+.rcsub{font-size:12px;color:var(--tm);margin-top:2px}
+.rtbl{width:100%;border-collapse:collapse}
+.rtbl th{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--tm);padding:10px 8px;text-align:center;border-bottom:1px solid var(--bdr)}
+.rtbl th:first-child{text-align:left;padding-left:14px}
+.rtbl td{font-size:13px;padding:10px 8px;border-bottom:1px solid var(--bdr);text-align:center;color:var(--tp)}
+.rtbl td:first-child{text-align:left;padding-left:14px;font-weight:500;font-size:12px}
+.rtbl tr:last-child td{border-bottom:none}
+.rtbl .totrow td{font-weight:700;background:var(--s100);font-size:13px;color:var(--g800)}
+.tdp{color:#16a34a;font-weight:600}
+.tdf{color:#dc2626;font-weight:600}
+.tdj{color:#d97706;font-weight:600}
+.tdt{color:var(--g700);font-weight:600}
+.pbar{display:block;width:100%;height:4px;background:var(--s200);border-radius:2px;margin-top:4px;overflow:hidden}
+.pfill{display:block;height:100%;background:var(--g500);border-radius:2px}
 
-  .status-btn:not(.presente, .falta, .justificou):hover {
-    background: var(--sand-100);
-    border-color: var(--sand-300);
-  }
+/* CONFIG */
+.cov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:flex-end}
+.cov.open{display:flex}
+.csht{background:var(--sur);width:100%;max-width:430px;margin:0 auto;border-radius:20px 20px 0 0;padding:24px 20px 40px;animation:sUp .3s ease;max-height:92dvh;overflow-y:auto}
+@keyframes sUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ctitle{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:20px;color:var(--tp)}
+.cfield{margin-bottom:14px}
+.clbl{font-size:12px;font-weight:600;color:var(--ts);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.cinput{width:100%;padding:12px 14px;border:1.5px solid var(--bdr);border-radius:var(--rsm);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--tp);background:var(--sur2);outline:none}
+.cinput:focus{border-color:var(--g500)}
+.cbtn{width:100%;padding:14px;background:var(--g900);color:white;border:none;border-radius:var(--rsm);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;margin-top:8px}
+.chint{font-size:12px;color:var(--tm);margin-top:14px;line-height:1.6;background:var(--s100);padding:10px 12px;border-radius:var(--rsm);border:1px solid var(--s200)}
+.chint code{font-family:monospace;background:var(--s200);padding:1px 4px;border-radius:4px;font-size:11px}
 
-  /* ── STATUS INDICATOR ── */
-  .status-indicator {
-    flex: 0 0 auto;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-  .si-presente { background: #dcfce7; }
-  .si-falta { background: #fee2e2; }
-  .si-justificou { background: #fef3c7; }
-  .si-pending { background: var(--sand-200); }
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(255,255,255,.93);backdrop-filter:blur(12px);border-top:1px solid var(--bdr);display:flex;padding:10px 0 20px;z-index:100}
+.nbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:4px;font-family:'DM Sans',sans-serif}
+.nbtn .nico{font-size:22px}
+.nbtn .nlbl{font-size:10px;font-weight:500;color:var(--tm);letter-spacing:.2px;transition:color .15s}
+.nbtn.act .nlbl{color:var(--g700)}
 
-  /* ── EVOLUTION FIELD ── */
-  .evolution-area {
-    padding: 0 16px 14px;
-    display: none;
-  }
-  .evolution-area.open { display: block; }
-  .evo-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-  .evo-input {
-    width: 100%;
-    min-height: 80px;
-    padding: 10px 12px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--text-primary);
-    background: var(--surface-2);
-    resize: vertical;
-    line-height: 1.5;
-    outline: none;
-    transition: border-color .15s;
-  }
-  .evo-input:focus { border-color: var(--green-500); background: var(--surface); }
-  .evo-input::placeholder { color: var(--text-muted); }
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--tp);color:white;padding:10px 18px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:300;box-shadow:0 8px 32px rgba(0,0,0,.2);max-width:calc(100% - 40px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* ── SAVE BUTTON ── */
-  .save-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    width: 100%;
-    padding: 11px;
-    margin-top: 8px;
-    border: none;
-    border-radius: var(--radius-sm);
-    background: var(--green-900);
-    color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    letter-spacing: 0.2px;
-    transition: all .18s;
-  }
-  .save-btn:hover { background: var(--green-800); }
-  .save-btn:active { transform: scale(.98); }
-  .save-btn.saving { opacity: .7; pointer-events: none; }
-  .save-btn.saved { background: #16a34a; }
+/* LOADING BAR */
+.lbar{height:2px;background:var(--g500);position:fixed;top:0;left:0;z-index:999;transition:width .3s;border-radius:0 2px 2px 0;box-shadow:0 0 8px var(--g500)}
 
-  /* ── EXPAND TOGGLE ── */
-  .expand-btn {
-    width: 100%;
-    padding: 7px 16px;
-    background: none;
-    border: none;
-    border-top: 1px dashed var(--border);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    color: var(--text-muted);
-    cursor: pointer;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    transition: color .15s;
-  }
-  .expand-btn:hover { color: var(--green-700); }
-  .expand-btn .arrow { transition: transform .2s; font-size: 10px; }
-  .expand-btn.open .arrow { transform: rotate(180deg); }
-
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    text-align: center;
-    padding: 48px 24px;
-    color: var(--text-muted);
-  }
-  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: .5; }
-  .empty-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; color: var(--text-secondary); }
-  .empty-sub { font-size: 13px; }
-
-  /* ── CONFIG PANEL ── */
-  .config-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.45);
-    z-index: 200;
-    display: none;
-    align-items: flex-end;
-  }
-  .config-overlay.open { display: flex; }
-  .config-sheet {
-    background: var(--surface);
-    width: 100%;
-    max-width: 430px;
-    margin: 0 auto;
-    border-radius: 20px 20px 0 0;
-    padding: 24px 20px 40px;
-    animation: slideUp .3s ease;
-  }
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .config-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 20px;
-    margin-bottom: 20px;
-    color: var(--text-primary);
-  }
-  .config-field { margin-bottom: 16px; }
-  .config-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-  .config-input {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--text-primary);
-    background: var(--surface-2);
-    outline: none;
-  }
-  .config-input:focus { border-color: var(--green-500); }
-  .config-btn {
-    width: 100%;
-    padding: 14px;
-    background: var(--green-900);
-    color: white;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: 8px;
-  }
-  .config-hint {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 16px;
-    line-height: 1.6;
-    background: var(--sand-50);
-    padding: 10px 12px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--sand-200);
-  }
-  .config-hint code {
-    font-family: monospace;
-    background: var(--sand-200);
-    padding: 1px 4px;
-    border-radius: 4px;
-    font-size: 11px;
-  }
-
-  /* ── BOTTOM NAV ── */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 430px;
-    background: rgba(255,255,255,.92);
-    backdrop-filter: blur(12px);
-    border-top: 1px solid var(--border);
-    display: flex;
-    padding: 10px 0 20px;
-    z-index: 100;
-  }
-  .nav-btn {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .nav-btn .nav-icon { font-size: 22px; }
-  .nav-btn .nav-lbl { font-size: 10px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.2px; }
-  .nav-btn.active .nav-lbl { color: var(--green-700); }
-
-  /* ── TOAST ── */
-  .toast {
-    position: fixed;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--text-primary);
-    color: white;
-    padding: 10px 18px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 500;
-    opacity: 0;
-    transition: all .3s ease;
-    pointer-events: none;
-    white-space: nowrap;
-    z-index: 300;
-    box-shadow: var(--shadow-lg);
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* ── LOADING ── */
-  .loading-bar {
-    height: 2px;
-    background: var(--green-500);
-    position: fixed;
-    top: 0; left: 0;
-    z-index: 999;
-    transition: width .3s ease;
-    border-radius: 0 2px 2px 0;
-    box-shadow: 0 0 8px var(--green-500);
-  }
-
-  /* ── FINALIZED CARD ── */
-  .patient-card.finalized { opacity: .75; }
-  .patient-card.finalized .card-main { opacity: .9; }
-
-  .card-status-bar {
-    height: 3px;
-    width: 100%;
-  }
-  .csb-presente { background: #16a34a; }
-  .csb-falta { background: #dc2626; }
-  .csb-justificou { background: #d97706; }
-  .csb-pending { background: transparent; }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --surface: #1c1c1a;
-      --surface-2: #242422;
-      --text-primary: #f0ede8;
-      --text-secondary: #a0a09a;
-      --text-muted: #68686440;
-      --border: #2e2e2c;
-      --sand-100: #1a1a18;
-      --sand-200: #242420;
-      --sand-300: #303030;
-    }
-    body { background: #141412; }
-    .meta-tag { background: #2a2a28; border-color: #3a3a38; }
-    .evo-input { background: #1c1c1a; }
-    .bottom-nav { background: rgba(20,20,18,.92); }
-    .config-hint { background: #1c1c1a; }
-  }
+@media(prefers-color-scheme:dark){
+  :root{--sur:#1c1c1a;--sur2:#242422;--tp:#f0ede8;--ts:#a0a09a;--tm:#686864;--bdr:#2e2e2c;--s100:#1a1a18;--s200:#242420;--s300:#303030}
+  body{background:#141412}
+  .mt{background:#2a2a28;border-color:#3a3a38}
+  .bnav{background:rgba(20,20,18,.93)}
+  .rtbl .totrow td{background:#1c1c1a}
+  .demobanner{background:rgba(255,193,7,.08);border-color:rgba(255,193,7,.2);color:#c49d00}
+}
 </style>
 </head>
 <body>
 
-<div class="loading-bar" id="loadingBar" style="width:0"></div>
+<div class="lbar" id="lbar" style="width:0"></div>
 
 <!-- HEADER -->
-<div class="app-header">
-  <div class="header-top">
-    <div class="app-title">Agenda <span>Clínica</span></div>
-    <div class="header-badge" id="therapistBadge">—</div>
+<div class="hdr">
+  <div class="htop">
+    <div class="atitle">Agenda <span>Clínica</span></div>
+    <div class="badge" id="thBadge">—</div>
   </div>
-  <div class="date-strip" id="dateStrip"></div>
+  <div class="dstrip" id="dstrip" style="display:none"></div>
+  <div class="rhdr" id="rhdr" style="display:none">
+    <div class="rhlbl">Resumo mensal</div>
+    <div class="msel-row">
+      <select class="msel" id="selMes">
+        <option value="1">Janeiro</option><option value="2">Fevereiro</option>
+        <option value="3">Março</option><option value="4">Abril</option>
+        <option value="5">Maio</option><option value="6">Junho</option>
+        <option value="7">Julho</option><option value="8">Agosto</option>
+        <option value="9">Setembro</option><option value="10">Outubro</option>
+        <option value="11">Novembro</option><option value="12">Dezembro</option>
+      </select>
+      <select class="ysel" id="selAno"></select>
+      <button class="ldbtn" onclick="loadResumo()">Ver</button>
+    </div>
+  </div>
 </div>
 
-<!-- MAIN -->
-<div class="main">
-  <div class="day-summary" id="daySummary" style="display:none">
-    <div class="summary-pill green">
-      <div class="num" id="countPresente">0</div>
-      <div class="label">Presentes</div>
-    </div>
-    <div class="summary-pill amber">
-      <div class="num" id="countJustificou">0</div>
-      <div class="label">Justificou</div>
-    </div>
-    <div class="summary-pill red">
-      <div class="num" id="countFalta">0</div>
-      <div class="label">Faltas</div>
-    </div>
-    <div class="summary-pill">
-      <div class="num" id="countTotal">0</div>
-      <div class="label">Total</div>
-    </div>
+<!-- VIEW: AGENDA -->
+<div class="view act" id="vAgenda">
+  <div class="dsum" id="dsum" style="display:none">
+    <div class="spill g"><div class="num" id="cP">0</div><div class="lbl">Presentes</div></div>
+    <div class="spill a"><div class="num" id="cJ">0</div><div class="lbl">Justificou</div></div>
+    <div class="spill r"><div class="num" id="cF">0</div><div class="lbl">Faltas</div></div>
+    <div class="spill"><div class="num" id="cT">0</div><div class="lbl">Total</div></div>
   </div>
+  <div class="slbl" id="slbl"></div>
+  <div class="plist" id="plist"></div>
+</div>
 
-  <div class="section-label" id="sectionLabel"></div>
-  <div class="patient-list" id="patientList"></div>
+<!-- VIEW: RESUMO -->
+<div class="view" id="vResumo">
+  <div id="resumoCont"></div>
 </div>
 
 <!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <button class="nav-btn active" onclick="showView('agenda')">
-    <span class="nav-icon">📋</span>
-    <span class="nav-lbl">Agenda</span>
+<div class="bnav">
+  <button class="nbtn act" id="nAg" onclick="switchView('agenda')">
+    <span class="nico">📋</span><span class="nlbl">Agenda</span>
   </button>
-  <button class="nav-btn" onclick="openConfig()">
-    <span class="nav-icon">⚙️</span>
-    <span class="nav-lbl">Configurar</span>
+  <button class="nbtn" id="nRe" onclick="switchView('resumo')">
+    <span class="nico">📊</span><span class="nlbl">Resumo</span>
+  </button>
+  <button class="nbtn" id="nCf" onclick="openCfg()">
+    <span class="nico">⚙️</span><span class="nlbl">Configurar</span>
   </button>
 </div>
 
-<!-- CONFIG OVERLAY -->
-<div class="config-overlay" id="configOverlay" onclick="closeConfigOutside(event)">
-  <div class="config-sheet">
-    <div class="config-title">Configuração</div>
-
-    <div class="config-field">
-      <div class="config-label">ID da Planilha (Google Sheets)</div>
-      <input class="config-input" id="sheetId" placeholder="Cole o ID da planilha aqui" type="text">
-    </div>
-
-    <div class="config-field">
-      <div class="config-label">Google API Key</div>
-      <input class="config-input" id="apiKey" placeholder="AIza..." type="text">
-    </div>
-
-    <div class="config-field">
-      <div class="config-label">Nome da aba de sessões</div>
-      <input class="config-input" id="sheetName" placeholder="Sessões" value="Sessões" type="text">
-    </div>
-
-    <div class="config-field">
-      <div class="config-label">Nome do terapeuta (para filtrar)</div>
-      <input class="config-input" id="therapistName" placeholder="Ex: Maria Cecilia" type="text">
-    </div>
-
-    <button class="config-btn" onclick="saveConfig()">Salvar e Carregar</button>
-
-    <div class="config-hint">
-      📌 Para obter o <strong>ID da planilha</strong>: abra o Google Sheets e copie o trecho entre <code>/d/</code> e <code>/edit</code> na URL.<br><br>
-      📌 Para a <strong>API Key</strong>: acesse <code>console.cloud.google.com</code> → Credenciais → Criar chave de API → ative a Google Sheets API.<br><br>
-      📌 A planilha deve ser <strong>compartilhada como leitora pública</strong> ou a API key deve ter acesso.
+<!-- CONFIG -->
+<div class="cov" id="cov" onclick="closeCfgOutside(event)">
+  <div class="csht">
+    <div class="ctitle">Configuração</div>
+    <div class="cfield"><div class="clbl">ID da Planilha Google Sheets</div><input class="cinput" id="cId" placeholder="Cole o ID aqui"></div>
+    <div class="cfield"><div class="clbl">Google API Key</div><input class="cinput" id="cKey" placeholder="AIza..."></div>
+    <div class="cfield"><div class="clbl">Aba de sessões</div><input class="cinput" id="cSess" value="Sessões"></div>
+    <div class="cfield"><div class="clbl">Aba de registros</div><input class="cinput" id="cReg" value="Registros"></div>
+    <div class="cfield"><div class="clbl">Nome do terapeuta</div><input class="cinput" id="cTher" placeholder="Ex: Maria Cecilia"></div>
+    <button class="cbtn" onclick="saveCfg()">Salvar e Carregar</button>
+    <div class="chint">
+      📌 <strong>ID da planilha</strong>: trecho entre <code>/d/</code> e <code>/edit</code> na URL do Sheets.<br><br>
+      📌 <strong>API Key</strong>: <code>console.cloud.google.com</code> → Credenciais → Criar chave → ative a <em>Google Sheets API</em>.<br><br>
+      📌 A planilha deve ser <strong>compartilhada como Editora</strong> para gravar dados de sessões e registros.
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── CONFIG ───────────────────────────────────────────
-let config = {
-  sheetId: '',
-  apiKey: '',
-  sheetName: 'Sessões',
-  therapistName: ''
-};
-
-function loadConfig() {
-  try {
-    const saved = localStorage.getItem('clinicConfig');
-    if (saved) config = { ...config, ...JSON.parse(saved) };
-  } catch(e) {}
+// ── CONFIG ────────────────────────────────────────────────────────
+let cfg={sheetId:'',apiKey:'',sessSheet:'Sessões',regSheet:'Registros',therapist:''};
+function loadCfg(){try{const s=localStorage.getItem('ac3');if(s)cfg={...cfg,...JSON.parse(s)};}catch(e){}}
+function saveCfg(){
+  cfg.sheetId=document.getElementById('cId').value.trim();
+  cfg.apiKey=document.getElementById('cKey').value.trim();
+  cfg.sessSheet=document.getElementById('cSess').value.trim()||'Sessões';
+  cfg.regSheet=document.getElementById('cReg').value.trim()||'Registros';
+  cfg.therapist=document.getElementById('cTher').value.trim();
+  localStorage.setItem('ac3',JSON.stringify(cfg));
+  closeCfg();updateBadge();fetchSessions();
 }
-
-function saveConfig() {
-  config.sheetId = document.getElementById('sheetId').value.trim();
-  config.apiKey = document.getElementById('apiKey').value.trim();
-  config.sheetName = document.getElementById('sheetName').value.trim() || 'Sessões';
-  config.therapistName = document.getElementById('therapistName').value.trim();
-  localStorage.setItem('clinicConfig', JSON.stringify(config));
-  closeConfig();
-  updateBadge();
-  fetchData();
+function openCfg(){
+  document.getElementById('cId').value=cfg.sheetId;
+  document.getElementById('cKey').value=cfg.apiKey;
+  document.getElementById('cSess').value=cfg.sessSheet;
+  document.getElementById('cReg').value=cfg.regSheet;
+  document.getElementById('cTher').value=cfg.therapist;
+  document.getElementById('cov').classList.add('open');
 }
+function closeCfg(){document.getElementById('cov').classList.remove('open');}
+function closeCfgOutside(e){if(e.target===document.getElementById('cov'))closeCfg();}
 
-function openConfig() {
-  document.getElementById('sheetId').value = config.sheetId;
-  document.getElementById('apiKey').value = config.apiKey;
-  document.getElementById('sheetName').value = config.sheetName;
-  document.getElementById('therapistName').value = config.therapistName;
-  document.getElementById('configOverlay').classList.add('open');
-}
-function closeConfig() { document.getElementById('configOverlay').classList.remove('open'); }
-function closeConfigOutside(e) { if (e.target === document.getElementById('configOverlay')) closeConfig(); }
+// ── STATE ─────────────────────────────────────────────────────────
+let sessions=[],selDate=null,weekDates=[],demoMode=false;
+const draftP={},draftE={};
 
-// ─── STATE ────────────────────────────────────────────
-let allSessions = [];
-let selectedDate = null;
-let weekDates = [];
-
-// Local overrides before saving to sheets
-let localOverrides = {}; // key: rowIndex, value: { presenca, evolucao }
-
-function getOverride(idx) { return localOverrides[idx] || {}; }
-function setOverride(idx, key, val) {
-  if (!localOverrides[idx]) localOverrides[idx] = {};
-  localOverrides[idx][key] = val;
-  saveLocal();
-}
-
-function saveLocal() {
-  try { localStorage.setItem('localOverrides', JSON.stringify(localOverrides)); } catch(e) {}
-}
-function loadLocal() {
-  try {
-    const s = localStorage.getItem('localOverrides');
-    if (s) localOverrides = JSON.parse(s);
-  } catch(e) {}
-}
-
-// ─── DATE HELPERS ─────────────────────────────────────
-function isoDate(d) {
-  return d.toISOString().split('T')[0];
-}
-
-function buildWeek() {
-  const today = new Date();
-  const day = today.getDay();
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - (day === 0 ? 6 : day - 1));
-  weekDates = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    weekDates.push(d);
+// ── VIEW SWITCHER ─────────────────────────────────────────────────
+function switchView(v){
+  ['vAgenda','vResumo'].forEach(id=>document.getElementById(id).classList.remove('act'));
+  ['nAg','nRe','nCf'].forEach(id=>document.getElementById(id).classList.remove('act'));
+  document.getElementById('dstrip').style.display='none';
+  document.getElementById('rhdr').style.display='none';
+  if(v==='agenda'){
+    document.getElementById('vAgenda').classList.add('act');
+    document.getElementById('nAg').classList.add('act');
+    document.getElementById('dstrip').style.display='flex';
+  } else {
+    document.getElementById('vResumo').classList.add('act');
+    document.getElementById('nRe').classList.add('act');
+    document.getElementById('rhdr').style.display='block';
   }
-  if (!selectedDate) selectedDate = isoDate(today);
 }
 
-const DAY_NAMES = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+// ── DATE HELPERS ──────────────────────────────────────────────────
+const DN=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const MN=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+function iso(d){return d.toISOString().split('T')[0];}
+function pDate(raw){
+  const s=String(raw||'');
+  if(s.includes('-'))return s.split('T')[0].split(' ')[0];
+  if(s.includes('/')){const p=s.split('/');return p.length===3?`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`:'';}
+  return '';
+}
+function fmtT(t){if(!t)return'—';const p=String(t).split(':');return`${p[0]}:${p[1]||'00'}`;}
+function buildWeek(){
+  const td=new Date(),dy=td.getDay(),mn=new Date(td);
+  mn.setDate(td.getDate()-(dy===0?6:dy-1));
+  weekDates=[];
+  for(let i=0;i<7;i++){const d=new Date(mn);d.setDate(mn.getDate()+i);weekDates.push(d);}
+  if(!selDate)selDate=iso(td);
+}
+function buildYears(){
+  const s=document.getElementById('selAno'),cy=new Date().getFullYear();
+  for(let y=cy+1;y>=cy-3;y--){const o=document.createElement('option');o.value=y;o.textContent=y;if(y===cy)o.selected=true;s.appendChild(o);}
+  document.getElementById('selMes').value=new Date().getMonth()+1;
+}
 
-function renderDateStrip() {
-  const strip = document.getElementById('dateStrip');
-  strip.innerHTML = '';
-  const sessionDates = new Set(allSessions.map(s => s.date));
-  weekDates.forEach(d => {
-    const iso = isoDate(d);
-    const chip = document.createElement('button');
-    chip.className = 'date-chip' +
-      (iso === selectedDate ? ' active' : '') +
-      (sessionDates.has(iso) ? ' has-sessions' : '');
-    chip.innerHTML = `<span class="day-name">${DAY_NAMES[d.getDay()]}</span><span class="day-num">${d.getDate()}</span>`;
-    chip.onclick = () => { selectedDate = iso; renderAll(); };
-    strip.appendChild(chip);
+// ── DATE STRIP ────────────────────────────────────────────────────
+function renderStrip(){
+  const strip=document.getElementById('dstrip');
+  strip.innerHTML='';
+  const sd=new Set(sessions.map(s=>s.date));
+  weekDates.forEach(d=>{
+    const i=iso(d);
+    const c=document.createElement('button');
+    c.className='dchip'+(i===selDate?' act':'')+(sd.has(i)?' hs':'');
+    c.innerHTML=`<span class="dn">${DN[d.getDay()]}</span><span class="dd">${d.getDate()}</span>`;
+    c.onclick=()=>{selDate=i;renderAgenda();};
+    strip.appendChild(c);
   });
-  // scroll active into view
-  setTimeout(() => {
-    const active = strip.querySelector('.active');
-    if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  }, 50);
+  setTimeout(()=>{const a=strip.querySelector('.act');if(a)a.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});},50);
 }
 
-// ─── DATA FETCH ───────────────────────────────────────
-async function fetchData() {
-  if (!config.sheetId || !config.apiKey) {
-    renderEmpty('Configure a planilha primeiro', 'Toque em ⚙️ para inserir o ID da planilha e a API Key');
-    return;
-  }
-
-  setLoading(true);
-  try {
-    const range = encodeURIComponent(`${config.sheetName}!A2:N200`);
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${config.sheetId}/values/${range}?key=${config.apiKey}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Erro ${res.status}`);
-    const data = await res.json();
-    parseRows(data.values || []);
-    renderAll();
-  } catch(e) {
-    renderEmpty('Erro ao carregar dados', e.message);
-    showToast('Erro: ' + e.message);
-  }
-  setLoading(false);
+// ── SHEETS API ────────────────────────────────────────────────────
+async function sGet(range){
+  const u=`https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${encodeURIComponent(range)}?key=${cfg.apiKey}`;
+  const r=await fetch(u);if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${r.status}`);}
+  return(await r.json()).values||[];
+}
+async function sAppend(range,vals){
+  const u=`https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS&key=${cfg.apiKey}`;
+  const r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({values:vals})});
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${r.status}`);}
+  return r.json();
+}
+async function sUpdate(range,val){
+  const u=`https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED&key=${cfg.apiKey}`;
+  const r=await fetch(u,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({values:[[val]]})});
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${r.status}`);}
+  return r.json();
 }
 
-function parseRows(rows) {
-  allSessions = [];
-  rows.forEach((row, i) => {
-    if (!row[1]) return; // sem data
-    const rawDate = row[1];
-    let date = '';
-    if (rawDate.includes('-')) {
-      date = rawDate.split('T')[0].split(' ')[0];
-    } else {
-      // Excel serial or dd/mm/yyyy
-      try { date = new Date(rawDate).toISOString().split('T')[0]; } catch(e) {}
-    }
-    if (!date) return;
-
-    const override = getOverride(i + 2);
-    allSessions.push({
-      rowIndex: i + 2,
-      date,
-      timeStart: row[2] || '',
-      timeEnd:   row[3] || '',
-      duration:  row[4] || '',
-      patient:   row[5] || '—',
-      convenio:  row[6] || '',
-      tipo:      row[7] || '',
-      processo:  row[8] || '',
-      semana:    row[9] || '',
-      presenca:  override.presenca !== undefined ? override.presenca : (row[10] || ''),
-      evolucao:  override.evolucao !== undefined ? override.evolucao : (row[11] || ''),
-      status:    row[12] || '',
+// ── FETCH SESSIONS ────────────────────────────────────────────────
+async function fetchSessions(){
+  if(!cfg.sheetId||!cfg.apiKey){demoMode=true;loadDemo();renderAll();setTimeout(()=>showToast('🔧 Modo demonstração — configure em ⚙️'),800);return;}
+  demoMode=false;setLoad(true);
+  try{
+    // Aba Sessões: A=ID B=Data C=HorIni D=HorFim E=Dur F=Paciente G=Convênio
+    //             H=Tipo I=Processo J=Semana K=Presença L=Evolução M=Status N=Distribuído
+    const rows=await sGet(`${cfg.sessSheet}!A2:N1000`);
+    sessions=[];
+    rows.forEach((r,i)=>{
+      if(!r[1])return;
+      const date=pDate(r[1]);if(!date)return;
+      sessions.push({
+        row:i+2,date,
+        tStart:r[2]||'',tEnd:r[3]||'',dur:r[4]||'',
+        patient:r[5]||'—',conv:r[6]||'',tipo:r[7]||'',
+        proc:r[8]||'',semana:r[9]||'',
+        presenca:r[10]||'',evolucao:r[11]||'',
+        status:r[12]||'',
+        locked:(r[12]||'').toLowerCase()==='finalizado'
+      });
     });
-  });
+    renderAll();
+  }catch(e){showToast('Erro: '+e.message);renderEmptyA('Erro ao carregar',e.message);}
+  setLoad(false);
 }
 
-// ─── RENDER ───────────────────────────────────────────
-function renderAll() {
-  renderDateStrip();
-  const dayItems = allSessions.filter(s => s.date === selectedDate)
-    .sort((a, b) => a.timeStart.localeCompare(b.timeStart));
-
-  updateSummary(dayItems);
-
-  const list = document.getElementById('patientList');
-  const label = document.getElementById('sectionLabel');
-
-  if (dayItems.length === 0) {
-    list.innerHTML = '';
-    label.textContent = '';
-    document.getElementById('daySummary').style.display = 'none';
-    renderEmpty('Sem sessões neste dia', 'Selecione outro dia na barra acima.');
-    return;
-  }
-
-  label.textContent = `${dayItems.length} sessão${dayItems.length > 1 ? 'ões' : ''} agendada${dayItems.length > 1 ? 's' : ''}`;
-  document.getElementById('daySummary').style.display = 'flex';
-  list.innerHTML = '';
-
-  dayItems.forEach(session => {
-    list.appendChild(buildCard(session));
-  });
+// ── RENDER AGENDA ─────────────────────────────────────────────────
+function renderAll(){renderStrip();renderAgenda();}
+function renderAgenda(){
+  renderStrip();
+  const items=sessions.filter(s=>s.date===selDate).sort((a,b)=>a.tStart.localeCompare(b.tStart));
+  updSum(items);
+  const pl=document.getElementById('plist'),sl=document.getElementById('slbl');
+  if(items.length===0){pl.innerHTML='';sl.textContent='';document.getElementById('dsum').style.display='none';renderEmptyA('Sem sessões neste dia','Selecione outro dia na barra acima.');return;}
+  sl.textContent=`${items.length} sessão${items.length>1?'ões':''} agendada${items.length>1?'s':''}`;
+  document.getElementById('dsum').style.display='flex';
+  pl.innerHTML='';
+  if(demoMode){const b=document.createElement('div');b.className='demobanner';b.innerHTML='⚠️ <strong>Modo demonstração</strong> — dados fictícios. Toque em ⚙️ para conectar sua planilha.';pl.appendChild(b);}
+  items.forEach(s=>pl.appendChild(buildCard(s)));
 }
 
-function buildCard(s) {
-  const card = document.createElement('div');
-  const presencaKey = (s.presenca || '').toLowerCase();
-  card.className = 'patient-card' + (s.presenca ? ' finalized' : '');
-  card.dataset.row = s.rowIndex;
+function buildCard(s){
+  const c=document.createElement('div');
+  const pk=(s.presenca||'').toLowerCase();
+  const cls=pk==='presente'?'p':pk==='falta'?'f':pk.includes('justif')?'j':'n';
+  const em={'p':'✅','f':'❌','j':'⚠️','n':'○'}[cls];
+  const hasDraft=draftP[s.row]!==undefined;
+  const effCls=hasDraft?({'Presente':'p','Falta':'f','Justificou':'j'}[draftP[s.row]]||cls):cls;
+  const effEm={'p':'✅','f':'❌','j':'⚠️','n':'○'}[effCls];
 
-  const statusClass = presencaKey === 'presente' ? 'presente'
-    : presencaKey === 'falta' ? 'falta'
-    : presencaKey.includes('justif') ? 'justificou'
-    : 'pending';
+  c.className='pc'+(s.locked?' lkd':'');
+  c.dataset.row=s.row;
+  const hasEvo=!!(draftE[s.row]!==undefined?draftE[s.row]:s.evolucao);
 
-  const statusEmoji = statusClass === 'presente' ? '✅'
-    : statusClass === 'falta' ? '❌'
-    : statusClass === 'justificou' ? '⚠️'
-    : '○';
-
-  const tStart = formatTime(s.timeStart);
-  const tEnd   = formatTime(s.timeEnd);
-
-  card.innerHTML = `
-    <div class="card-status-bar csb-${statusClass}"></div>
-    <div class="card-main">
-      <div class="time-block">
-        <div class="time-start">${tStart}</div>
-        <div class="time-end">${tEnd}</div>
-        <div class="time-dot"></div>
-      </div>
-      <div class="patient-info">
-        <div class="patient-name">${s.patient}</div>
-        <div class="patient-meta">
-          ${s.convenio ? `<span class="meta-tag">${s.convenio}</span>` : ''}
-          ${s.duration ? `<span class="meta-tag">${s.duration}min</span>` : ''}
-          ${s.processo ? `<span class="meta-tag">${s.processo}</span>` : ''}
+  c.innerHTML=`
+    <div class="csbar cb-${effCls}"></div>
+    <div class="cmain">
+      <div class="tblk"><div class="ts2">${fmtT(s.tStart)}</div><div class="te">${fmtT(s.tEnd)}</div><div class="tdot"></div></div>
+      <div class="pinfo">
+        <div class="pname">${s.patient}</div>
+        <div class="pmeta">
+          ${s.conv?`<span class="mt">${s.conv}</span>`:''}
+          ${s.dur?`<span class="mt">${s.dur}min</span>`:''}
+          ${s.proc?`<span class="mt">${s.proc}</span>`:''}
         </div>
       </div>
-      <div class="status-indicator si-${statusClass}">${statusEmoji}</div>
+      <div class="si si-${effCls}">${effEm}</div>
     </div>
-    <div class="status-row">
-      <button class="status-btn ${statusClass === 'presente' ? 'presente' : ''}" onclick="setStatus(${s.rowIndex}, 'Presente', this)">
-        <span class="icon">✅</span><span class="lbl">Presente</span>
-      </button>
-      <button class="status-btn ${statusClass === 'justificou' ? 'justificou' : ''}" onclick="setStatus(${s.rowIndex}, 'Justificou', this)">
-        <span class="icon">⚠️</span><span class="lbl">Justificou</span>
-      </button>
-      <button class="status-btn ${statusClass === 'falta' ? 'falta' : ''}" onclick="setStatus(${s.rowIndex}, 'Falta', this)">
-        <span class="icon">❌</span><span class="lbl">Falta</span>
-      </button>
-    </div>
-    <button class="expand-btn" onclick="toggleEvolution(this, ${s.rowIndex})">
-      <span>📝 Evolução da sessão</span>
-      <span class="arrow">▼</span>
+    ${s.locked
+      ?`<div class="lkbadge">🔒 Atendimento registrado — sem alterações permitidas</div>`
+      :`<div class="srow">
+          <button class="sbtn ${effCls==='p'?'sp':''}" onclick="setSt(${s.row},'Presente',this)"><span class="ico">✅</span><span class="lbl2">Presente</span></button>
+          <button class="sbtn ${effCls==='j'?'sj':''}" onclick="setSt(${s.row},'Justificou',this)"><span class="ico">⚠️</span><span class="lbl2">Justificou</span></button>
+          <button class="sbtn ${effCls==='f'?'sf':''}" onclick="setSt(${s.row},'Falta',this)"><span class="ico">❌</span><span class="lbl2">Falta</span></button>
+        </div>`
+    }
+    <button class="expbtn${hasEvo?' open':''}" onclick="togEvo(this,${s.row})">
+      <span>📝 Evolução da sessão</span><span class="arr">▼</span>
     </button>
-    <div class="evolution-area" id="evo-${s.rowIndex}">
-      <div class="evo-label">Anotações / Evolução</div>
-      <textarea class="evo-input" placeholder="Descreva como foi a sessão, observações clínicas, próximos passos..." rows="4" oninput="draftEvolution(${s.rowIndex}, this.value)">${s.evolucao || ''}</textarea>
-      <button class="save-btn" onclick="saveSession(${s.rowIndex})">
-        <span>💾</span> Salvar sessão
-      </button>
-    </div>
-  `;
-
-  // Auto-open evolution if already has text
-  if (s.evolucao) {
-    setTimeout(() => {
-      const evoArea = card.querySelector('.evolution-area');
-      const expandBtn = card.querySelector('.expand-btn');
-      if (evoArea && expandBtn) {
-        evoArea.classList.add('open');
-        expandBtn.classList.add('open');
-      }
-    }, 0);
-  }
-
-  return card;
-}
-
-function formatTime(t) {
-  if (!t) return '—';
-  // Handle HH:MM:SS or HH:MM
-  const parts = t.split(':');
-  return `${parts[0]}:${parts[1] || '00'}`;
-}
-
-function renderEmpty(title, sub) {
-  document.getElementById('patientList').innerHTML = `
-    <div class="empty-state">
-      <div class="empty-icon">📅</div>
-      <div class="empty-title">${title}</div>
-      <div class="empty-sub">${sub}</div>
+    <div class="evoarea${hasEvo?' open':''}" id="ev-${s.row}">
+      <div class="evolbl">Anotações / Evolução</div>
+      <textarea class="evoinput" placeholder="Descreva como foi a sessão..." rows="4"
+        ${s.locked?'readonly':''} oninput="draftEvo(${s.row},this.value)">${draftE[s.row]!==undefined?draftE[s.row]:(s.evolucao||'')}</textarea>
+      ${s.locked?'':`<button class="savebtn" id="sv-${s.row}" onclick="saveSession(${s.row})"><span>💾</span> Salvar sessão</button>`}
     </div>`;
+  return c;
 }
 
-// ─── INTERACTIONS ─────────────────────────────────────
-function setStatus(rowIdx, presenca, btn) {
-  setOverride(rowIdx, 'presenca', presenca);
+function renderEmptyA(t,s){document.getElementById('plist').innerHTML=`<div class="empty"><div class="empty-ico">📅</div><div class="empty-t">${t}</div><div class="empty-s">${s}</div></div>`;}
 
-  // Update local session data
-  const session = allSessions.find(s => s.rowIndex === rowIdx);
-  if (session) session.presenca = presenca;
+// ── STATUS & EVO ──────────────────────────────────────────────────
+function setSt(row,presenca,btn){
+  draftP[row]=presenca;
+  const card=document.querySelector(`[data-row="${row}"]`);if(!card)return;
+  const pk=presenca.toLowerCase();
+  const cls=pk==='presente'?'p':pk==='falta'?'f':'j';
+  const em={'p':'✅','f':'❌','j':'⚠️'}[cls];
+  card.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('sp','sf','sj'));
+  btn.classList.add({'p':'sp','f':'sf','j':'sj'}[cls]);
+  card.querySelector('.si').className=`si si-${cls}`;
+  card.querySelector('.si').textContent=em;
+  card.querySelector('.csbar').className=`csbar cb-${cls}`;
+  const ea=card.querySelector('.evoarea'),eb=card.querySelector('.expbtn');
+  if(ea&&!ea.classList.contains('open')){ea.classList.add('open');eb.classList.add('open');}
+  const sess=sessions.find(s=>s.row===row);if(sess)sess.presenca=presenca;
+  updSum(sessions.filter(s=>s.date===selDate));
+}
 
-  // Update card UI
-  const card = document.querySelector(`[data-row="${rowIdx}"]`);
-  if (!card) return;
+function draftEvo(row,val){draftE[row]=val;const s=sessions.find(x=>x.row===row);if(s)s.evolucao=val;}
+function togEvo(btn,row){btn.classList.toggle('open');document.getElementById('ev-'+row).classList.toggle('open');}
 
-  // Update status buttons
-  card.querySelectorAll('.status-btn').forEach(b => {
-    b.classList.remove('presente', 'falta', 'justificou');
+// ── SAVE SESSION ──────────────────────────────────────────────────
+async function saveSession(row){
+  const sess=sessions.find(s=>s.row===row);if(!sess){showToast('Sessão não encontrada');return;}
+  const presenca=draftP[row]||sess.presenca;
+  const evolucao=draftE[row]!==undefined?draftE[row]:(sess.evolucao||'');
+  if(!presenca){showToast('Selecione o status de presença primeiro ☝️');return;}
+
+  if(demoMode){lockCard(row,presenca,evolucao);showToast('✅ Demo — sessão registrada localmente');return;}
+
+  const sv=document.getElementById('sv-'+row);
+  if(sv){sv.classList.add('sving');sv.innerHTML='⏳ Salvando...';}
+
+  try{
+    // Get next ID for Registros
+    const regRows=await sGet(`${cfg.regSheet}!A2:A1000`);
+    const nextId=regRows.filter(r=>r[0]&&!isNaN(+r[0])).length+1;
+
+    const dp=sess.date.split('-');
+    const mes=+dp[1],ano=+dp[0];
+    const now=new Date().toISOString().replace('T',' ').slice(0,19);
+
+    // Append to Registros:
+    // A=ID B=Data C=HorIni D=HorFim E=Dur F=Paciente G=Convênio
+    // H=Semana I=Presença J=Evolução K=Mês L=Ano M=Registrado em
+    await sAppend(`${cfg.regSheet}!A:M`,[[
+      nextId, sess.date, fmtT(sess.tStart), fmtT(sess.tEnd),
+      sess.dur||'', sess.patient, sess.conv||'', sess.semana||'',
+      presenca, evolucao, mes, ano, now
+    ]]);
+
+    // Update Sessões: K=Presença L=Evolução M=Status
+    await sUpdate(`${cfg.sessSheet}!K${row}`,presenca);
+    await sUpdate(`${cfg.sessSheet}!L${row}`,evolucao);
+    await sUpdate(`${cfg.sessSheet}!M${row}`,'Finalizado');
+
+    lockCard(row,presenca,evolucao);
+    showToast('✅ Sessão salva e registrada com sucesso!');
+  }catch(e){
+    if(sv){sv.classList.remove('sving');sv.innerHTML='<span>💾</span> Salvar sessão';}
+    showToast('Erro ao salvar: '+e.message);
+  }
+}
+
+function lockCard(row,presenca,evolucao){
+  const sess=sessions.find(s=>s.row===row);
+  if(sess){sess.presenca=presenca;sess.evolucao=evolucao;sess.locked=true;sess.status='Finalizado';}
+  const card=document.querySelector(`[data-row="${row}"]`);if(!card)return;
+  card.classList.add('lkd');
+  const sr=card.querySelector('.srow');
+  if(sr)sr.outerHTML=`<div class="lkbadge">🔒 Atendimento registrado — sem alterações permitidas</div>`;
+  const sv=card.querySelector('.savebtn');if(sv)sv.style.display='none';
+  const ta=card.querySelector('.evoinput');if(ta){ta.readOnly=true;ta.style.background='var(--s100)';ta.style.color='var(--ts)';}
+  const eb=card.querySelector('.expbtn');if(eb)eb.style.pointerEvents='none';
+}
+
+// ── SUMMARY ──────────────────────────────────────────────────────
+function updSum(items){
+  document.getElementById('cP').textContent=items.filter(s=>(s.presenca||'').toLowerCase()==='presente').length;
+  document.getElementById('cF').textContent=items.filter(s=>(s.presenca||'').toLowerCase()==='falta').length;
+  document.getElementById('cJ').textContent=items.filter(s=>(s.presenca||'').toLowerCase().includes('justif')).length;
+  document.getElementById('cT').textContent=items.length;
+}
+
+// ── RESUMO MENSAL ─────────────────────────────────────────────────
+async function loadResumo(){
+  const mes=+document.getElementById('selMes').value;
+  const ano=+document.getElementById('selAno').value;
+  const mesNome=MN[mes-1];
+  const cont=document.getElementById('resumoCont');
+  cont.innerHTML=`<div class="empty"><div class="empty-ico">⏳</div><div class="empty-t">Carregando...</div></div>`;
+
+  if(demoMode){renderResumo(getDemoReg(),mes,ano,mesNome);return;}
+  if(!cfg.sheetId||!cfg.apiKey){cont.innerHTML=`<div class="empty"><div class="empty-ico">⚙️</div><div class="empty-t">Configure a planilha</div><div class="empty-s">Toque em ⚙️ primeiro</div></div>`;return;}
+
+  setLoad(true);
+  try{
+    // Registros: A=ID B=Data C=HorIni D=HorFim E=Dur F=Paciente G=Convênio
+    //            H=Semana I=Presença J=Evolução K=Mês L=Ano M=Registrado
+    const rows=await sGet(`${cfg.regSheet}!A2:M2000`);
+    const regs=rows.filter(r=>r[5]).map(r=>({
+      patient:r[5]||'',conv:r[6]||'',presenca:r[8]||'',
+      mes:+r[10]||0,ano:+r[11]||0
+    }));
+    renderResumo(regs,mes,ano,mesNome);
+  }catch(e){cont.innerHTML=`<div class="empty"><div class="empty-ico">❌</div><div class="empty-t">Erro ao carregar</div><div class="empty-s">${e.message}</div></div>`;}
+  setLoad(false);
+}
+
+function renderResumo(regs,mes,ano,mesNome){
+  const fil=regs.filter(r=>r.mes===mes&&r.ano===ano);
+  const cont=document.getElementById('resumoCont');
+  if(fil.length===0){cont.innerHTML=`<div class="empty"><div class="empty-ico">📭</div><div class="empty-t">Nenhum registro em ${mesNome}/${ano}</div><div class="empty-s">Registros aparecem após salvar sessões.</div></div>`;return;}
+
+  const map={};
+  fil.forEach(r=>{
+    if(!map[r.patient])map[r.patient]={patient:r.patient,conv:r.conv,p:0,f:0,j:0};
+    const pk=(r.presenca||'').toLowerCase();
+    if(pk==='presente')map[r.patient].p++;
+    else if(pk==='falta')map[r.patient].f++;
+    else if(pk.includes('justif'))map[r.patient].j++;
   });
-  const cls = presenca.toLowerCase() === 'presente' ? 'presente'
-    : presenca.toLowerCase() === 'falta' ? 'falta' : 'justificou';
-  btn.classList.add(cls);
 
-  // Update indicator
-  const si = card.querySelector('.status-indicator');
-  si.className = 'status-indicator si-' + cls;
-  si.textContent = cls === 'presente' ? '✅' : cls === 'falta' ? '❌' : '⚠️';
+  const rows=Object.values(map).sort((a,b)=>a.patient.localeCompare(b.patient));
+  const tP=rows.reduce((s,r)=>s+r.p,0);
+  const tF=rows.reduce((s,r)=>s+r.f,0);
+  const tJ=rows.reduce((s,r)=>s+r.j,0);
+  const tG=tP+tF+tJ;
 
-  // Update status bar
-  const bar = card.querySelector('.card-status-bar');
-  bar.className = 'card-status-bar csb-' + cls;
+  const trs=rows.map(r=>{
+    const tot=r.p+r.f+r.j;
+    const pct=tot>0?Math.round(r.p/tot*100):0;
+    return`<tr>
+      <td>${r.patient}${r.conv?`<br><span style="font-size:10px;color:var(--tm);font-weight:400">${r.conv}</span>`:''}</td>
+      <td class="tdp">${r.p}</td><td class="tdf">${r.f}</td><td class="tdj">${r.j}</td>
+      <td class="tdt">${tot}<span class="pbar"><span class="pfill" style="width:${pct}%"></span></span></td>
+    </tr>`;
+  }).join('');
 
-  card.classList.add('finalized');
-  updateSummary(allSessions.filter(s => s.date === selectedDate));
+  const totPct=tG>0?Math.round(tP/tG*100):0;
 
-  // Auto-open evolution
-  const expandBtn = card.querySelector('.expand-btn');
-  const evoArea = card.querySelector('.evolution-area');
-  if (evoArea && !evoArea.classList.contains('open')) {
-    evoArea.classList.add('open');
-    expandBtn.classList.add('open');
-  }
+  cont.innerHTML=`<div class="rcard">
+    <div class="rchead">
+      <div class="rctitle">${mesNome} ${ano}</div>
+      <div class="rcsub">${cfg.therapist||'Terapeuta'} · ${fil.length} registro${fil.length!==1?'s':''} · ${rows.length} paciente${rows.length!==1?'s':''}</div>
+    </div>
+    <table class="rtbl">
+      <thead><tr>
+        <th style="text-align:left;padding-left:14px">Paciente</th>
+        <th>✅ Pres.</th><th>❌ Faltas</th><th>⚠️ Just.</th><th>Total</th>
+      </tr></thead>
+      <tbody>
+        ${trs}
+        <tr class="totrow">
+          <td>TOTAL GERAL</td>
+          <td class="tdp">${tP}</td><td class="tdf">${tF}</td><td class="tdj">${tJ}</td>
+          <td class="tdt">${tG}<span class="pbar"><span class="pfill" style="width:${totPct}%"></span></span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>`;
 }
 
-function draftEvolution(rowIdx, val) {
-  setOverride(rowIdx, 'evolucao', val);
-  const session = allSessions.find(s => s.rowIndex === rowIdx);
-  if (session) session.evolucao = val;
+// ── DEMO DATA ─────────────────────────────────────────────────────
+function loadDemo(){
+  const d=iso(new Date());
+  sessions=[
+    {row:2,date:d,tStart:'08:00:00',tEnd:'09:00:00',dur:'60',patient:'Manuela do Espirito Santo',conv:'SulAmérica',tipo:'AN',proc:'Anamnese',semana:'Demo',presenca:'Presente',evolucao:'Hoje foi anamnese com os pais',status:'Finalizado',locked:true},
+    {row:3,date:d,tStart:'09:00:00',tEnd:'09:30:00',dur:'30',patient:'Ana Julia da Silva Melo',conv:'Unimed',tipo:'',proc:'',semana:'Demo',presenca:'',evolucao:'',status:'Agendado',locked:false},
+    {row:4,date:d,tStart:'09:30:00',tEnd:'10:30:00',dur:'60',patient:'Graziela Spina Cardoso',conv:'SulAmérica',tipo:'',proc:'',semana:'Demo',presenca:'Falta',evolucao:'',status:'Finalizado',locked:true},
+    {row:5,date:d,tStart:'10:30:00',tEnd:'11:00:00',dur:'30',patient:'Simone C. Marques Preto',conv:'Unimed',tipo:'',proc:'',semana:'Demo',presenca:'',evolucao:'',status:'Agendado',locked:false},
+    {row:6,date:d,tStart:'11:00:00',tEnd:'12:00:00',dur:'60',patient:'Kawan Cavichiolli Almeida',conv:'SulAmérica',tipo:'AN',proc:'',semana:'Demo',presenca:'',evolucao:'',status:'Agendado',locked:false},
+    {row:7,date:d,tStart:'13:00:00',tEnd:'14:00:00',dur:'60',patient:'Giovanna de Morais Affonso',conv:'Particular',tipo:'AN',proc:'',semana:'Demo',presenca:'',evolucao:'',status:'Agendado',locked:false},
+  ];
 }
-
-function toggleEvolution(btn, rowIdx) {
-  btn.classList.toggle('open');
-  document.getElementById('evo-' + rowIdx).classList.toggle('open');
-}
-
-// ─── SAVE TO GOOGLE SHEETS ────────────────────────────
-async function saveSession(rowIdx) {
-  const session = allSessions.find(s => s.rowIndex === rowIdx);
-  if (!session) return;
-
-  const override = getOverride(rowIdx);
-  const presenca = override.presenca || session.presenca || '';
-  const evolucao = override.evolucao !== undefined ? override.evolucao : (session.evolucao || '');
-
-  const card = document.querySelector(`[data-row="${rowIdx}"]`);
-  const saveBtn = card?.querySelector('.save-btn');
-  if (saveBtn) { saveBtn.classList.add('saving'); saveBtn.textContent = '⏳ Salvando...'; }
-
-  if (!config.sheetId || !config.apiKey) {
-    showToast('Configure a planilha primeiro!');
-    if (saveBtn) { saveBtn.classList.remove('saving'); saveBtn.innerHTML = '<span>💾</span> Salvar sessão'; }
-    return;
-  }
-
-  try {
-    // Update Presença (col K = index 10) and Evolução (col L = index 11)
-    const presencaRange = `${config.sheetName}!K${rowIdx}`;
-    const evolucaoRange = `${config.sheetName}!L${rowIdx}`;
-
-    await updateCell(presencaRange, presenca);
-    await updateCell(evolucaoRange, evolucao);
-
-    // Mark status as Finalizado (col M = index 12)
-    const statusRange = `${config.sheetName}!M${rowIdx}`;
-    await updateCell(statusRange, 'Finalizado');
-
-    if (saveBtn) {
-      saveBtn.classList.remove('saving');
-      saveBtn.classList.add('saved');
-      saveBtn.innerHTML = '<span>✅</span> Salvo com sucesso!';
-      setTimeout(() => {
-        saveBtn.classList.remove('saved');
-        saveBtn.innerHTML = '<span>💾</span> Salvar sessão';
-      }, 2500);
-    }
-    showToast('Sessão salva com sucesso! ✅');
-  } catch(e) {
-    if (saveBtn) {
-      saveBtn.classList.remove('saving');
-      saveBtn.innerHTML = '<span>💾</span> Salvar sessão';
-    }
-    showToast('Erro ao salvar: ' + e.message);
-  }
-}
-
-async function updateCell(range, value) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${config.sheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED&key=${config.apiKey}`;
-  const res = await fetch(url, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ values: [[value]] })
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || `HTTP ${res.status}`);
-  }
-  return res.json();
-}
-
-// ─── SUMMARY ─────────────────────────────────────────
-function updateSummary(items) {
-  const presente   = items.filter(s => (s.presenca || '').toLowerCase() === 'presente').length;
-  const falta      = items.filter(s => (s.presenca || '').toLowerCase() === 'falta').length;
-  const justificou = items.filter(s => (s.presenca || '').toLowerCase().includes('justif')).length;
-  document.getElementById('countPresente').textContent   = presente;
-  document.getElementById('countFalta').textContent      = falta;
-  document.getElementById('countJustificou').textContent = justificou;
-  document.getElementById('countTotal').textContent      = items.length;
-}
-
-// ─── UI HELPERS ───────────────────────────────────────
-function setLoading(on) {
-  const bar = document.getElementById('loadingBar');
-  bar.style.width = on ? '70%' : '100%';
-  if (!on) setTimeout(() => { bar.style.width = '0'; bar.style.transition = 'none'; setTimeout(() => bar.style.transition = '', 50); }, 400);
-}
-
-function showToast(msg, duration = 2500) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), duration);
-}
-
-function updateBadge() {
-  const b = document.getElementById('therapistBadge');
-  b.textContent = config.therapistName || 'Terapeuta';
-}
-
-// ─── DEMO MODE (offline) ──────────────────────────────
-function loadDemoData() {
-  const today = new Date();
-  const iso = isoDate(today);
-  allSessions = [
-    { rowIndex: 2, date: iso, timeStart: '08:00:00', timeEnd: '09:00:00', duration: '60', patient: 'Manuela do Espirito Santo', convenio: 'SulAmérica', tipo: 'AN', processo: 'Anamnese', presenca: 'Presente', evolucao: 'Hoje foi anamnese com os pais', status: 'Finalizado' },
-    { rowIndex: 3, date: iso, timeStart: '09:00:00', timeEnd: '09:30:00', duration: '30', patient: 'Ana Julia da Silva Melo', convenio: 'Unimed', tipo: '', processo: '', presenca: '', evolucao: '', status: 'Agendado' },
-    { rowIndex: 4, date: iso, timeStart: '09:30:00', timeEnd: '10:30:00', duration: '60', patient: 'Graziela Spina Cardoso', convenio: 'SulAmérica', tipo: '', processo: '', presenca: 'Falta', evolucao: '', status: 'Finalizado' },
-    { rowIndex: 5, date: iso, timeStart: '10:30:00', timeEnd: '11:00:00', duration: '30', patient: 'Simone C. Marques Preto', convenio: 'Unimed', tipo: '', processo: '', presenca: '', evolucao: '', status: 'Agendado' },
-    { rowIndex: 6, date: iso, timeStart: '11:00:00', timeEnd: '12:00:00', duration: '60', patient: 'Kawan Cavichiolli Almeida', convenio: 'SulAmérica', tipo: 'AN', processo: '', presenca: '', evolucao: '', status: 'Agendado' },
-    { rowIndex: 7, date: iso, timeStart: '13:00:00', timeEnd: '14:00:00', duration: '60', patient: 'Giovanna de Morais Affonso', convenio: 'Particular', tipo: 'AN', processo: '', presenca: '', evolucao: '', status: 'Agendado' },
+function getDemoReg(){
+  const m=new Date().getMonth()+1,y=new Date().getFullYear();
+  return[
+    {patient:'Manuela do Espirito Santo',conv:'SulAmérica',presenca:'Presente',mes:m,ano:y},
+    {patient:'Ana Julia da Silva Melo',conv:'Unimed',presenca:'Presente',mes:m,ano:y},
+    {patient:'Ana Julia da Silva Melo',conv:'Unimed',presenca:'Falta',mes:m,ano:y},
+    {patient:'Graziela Spina Cardoso',conv:'SulAmérica',presenca:'Falta',mes:m,ano:y},
+    {patient:'Simone C. Marques Preto',conv:'Unimed',presenca:'Presente',mes:m,ano:y},
+    {patient:'Simone C. Marques Preto',conv:'Unimed',presenca:'Presente',mes:m,ano:y},
+    {patient:'Kawan Cavichiolli Almeida',conv:'SulAmérica',presenca:'Presente',mes:m,ano:y},
+    {patient:'Giovanna de Morais Affonso',conv:'Particular',presenca:'Justificou',mes:m,ano:y},
+    {patient:'Giovanna de Morais Affonso',conv:'Particular',presenca:'Presente',mes:m,ano:y},
   ];
 }
 
-// ─── INIT ─────────────────────────────────────────────
-function init() {
-  loadConfig();
-  loadLocal();
-  buildWeek();
-  updateBadge();
-
-  if (!config.sheetId || !config.apiKey) {
-    // Load demo data so the user sees the UI working
-    loadDemoData();
-    renderAll();
-    setTimeout(() => showToast('🔧 Modo demonstração — configure a planilha em ⚙️'), 800);
-  } else {
-    fetchData();
-  }
+// ── HELPERS ───────────────────────────────────────────────────────
+function setLoad(on){
+  const b=document.getElementById('lbar');
+  b.style.transition='width .3s';b.style.width=on?'70%':'100%';
+  if(!on)setTimeout(()=>{b.style.transition='none';b.style.width='0';setTimeout(()=>b.style.transition='',50);},400);
 }
+function showToast(msg,dur=2800){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+function updateBadge(){document.getElementById('thBadge').textContent=cfg.therapist||'Terapeuta';}
 
+// ── INIT ──────────────────────────────────────────────────────────
+function init(){loadCfg();buildWeek();buildYears();updateBadge();switchView('agenda');fetchSessions();}
 init();
 </script>
 </body>
