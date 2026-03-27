@@ -613,6 +613,18 @@ function lockCard(row,presenca,evolucao){
   const sv=card.querySelector('.savebtn');if(sv)sv.style.display='none';
   const ta=card.querySelector('.evoinput');if(ta){ta.readOnly=true;ta.style.background='var(--s100)';ta.style.color='var(--ts)';}
   const eb=card.querySelector('.expbtn');if(eb)eb.style.pointerEvents='none';
+  
+  // fechar evolução
+  const evoArea = card.querySelector('.evoarea');
+  const expBtn = card.querySelector('.expbtn');
+  if(evoArea) evoArea.classList.remove('open');
+  if(expBtn) expBtn.classList.remove('open');
+  
+  // mover card para o final da lista
+  const lista = document.getElementById('plist');
+  if(lista && card){
+  lista.appendChild(card);
+}
 }
 
 // ── SUMMARY ──────────────────────────────────────────────────────
