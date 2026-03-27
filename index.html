@@ -592,13 +592,13 @@ const res = await fetch("https://autumn-recipe-ece3.eadonato.workers.dev/", {
   body: JSON.stringify(payload)
 });
 
-const data = await res.json();
+const resp = await res.json();
 
-if (data.status === "ok") {
+if (resp.status === "ok") {
   lockCard(row,presenca,evolucao);
   showToast('✅ Sessão salva com sucesso!');
 } else {
-  throw new Error(data.error || "Erro desconhecido");
+  throw new Error(resp.error || "Erro desconhecido");
 }
 
     const data = await res.json();
