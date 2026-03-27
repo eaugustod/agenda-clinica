@@ -489,7 +489,7 @@ function draftEvo(row,val){draftE[row]=val;const s=sessions.find(x=>x.row===row)
 function togEvo(btn,row){btn.classList.toggle('open');document.getElementById('ev-'+row).classList.toggle('open');}
 
 // ── SAVE SESSION ──────────────────────────────────────────────────
-async function saveSession(row){
+/*async function saveSession(row){
   const sess=sessions.find(s=>s.row===row);if(!sess){showToast('Sessão não encontrada');return;}
   const presenca=draftP[row]||sess.presenca;
   const evolucao=draftE[row]!==undefined?draftE[row]:(sess.evolucao||'');
@@ -530,6 +530,77 @@ async function saveSession(row){
     showToast('Erro ao salvar: '+e.message);
   }
 }
+*/
+async function saveSession(row){
+  const sess=sessions.find(s=>s.row===row);
+  if(!sess){showToast('Sessão não encontrada');return;}
+
+  const presenca=draftP[row]||sess.presenca;
+  const evolucao=draftE[row]!==undefined?draftE[row]:(sess.evolucao||'');
+
+  if(!presenca){
+    showToast('Selecione o status de presença primeiro ☝️');
+    return;
+  }
+
+  if(demoMode){
+    lockCard(row,presenca,evolucao);
+    showToast('✅ Demo — sessão registrada localmente');
+    return;
+  }
+
+  const sv=document.getElementById('sv-'+row);
+  if(sv){
+    sv.classList.add('sving');
+    sv.innerHTML='⏳ Salvando...';
+  }
+
+  try{
+    const dp=sess.date.split('-');
+    const mes=+dp[1];
+    const ano=+dp[0];
+    const now=new Date().toISOString().replace('T',' ').slice(0,19);
+
+    const payload = {
+      sheetId: cfg.sheetId,
+      row: row,
+      presenca: presenca,
+      evolucao: evolucao,
+      registro: [
+        "", // ID (Apps Script pode ignorar ou calcular depois)
+        sess.date,
+        fmtT(sess.tStart),
+        fmtT(sess.tEnd),
+        sess.dur || '',
+        sess.patient,
+        sess.conv || '',
+        sess.semana || '',
+        presenca,
+        evolucao,
+        mes,
+        ano,
+        now
+      ]
+    };
+
+    await fetch("https://script.google.com/macros/s/AKfycbzyZYAOhf9XilVA21GwN_6fLrt8cDzlMQ2otTt8JOoL1EVJ3gCpJAwWfe012JPPzoAT/exec", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    lockCard(row,presenca,evolucao);
+    showToast('✅ Sessão salva com sucesso!');
+  }catch(e){
+    if(sv){
+      sv.classList.remove('sving');
+      sv.innerHTML='<span>💾</span> Salvar sessão';
+    }
+    showToast('Erro ao salvar: '+e.message);
+  }
+}  
 
 function lockCard(row,presenca,evolucao){
   const sess=sessions.find(s=>s.row===row);
