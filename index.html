@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#0F4C3A">
+<title>Agenda Clínica</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-900: #0F4C3A;
+    --green-800: #155c48;
+    --green-700: #1a6e55;
+    --green-500: #27a37c;
+    --green-300: #6fcfae;
+    --green-100: #d4f0e7;
+    --green-50:  #edfaf5;
+    --sand-100: #f5f1eb;
+    --sand-200: #ede7dc;
+    --sand-300: #d9d0c3;
+    --text-primary: #1a1a18;
+    --text-secondary: #5a5a56;
+    --text-muted: #9a9a94;
+    --surface: #ffffff;
+    --surface-2: #faf9f7;
+    --border: #e8e4de;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow: 0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.04);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--sand-100);
+    color: var(--text-primary);
+    min-height: 100dvh;
+    max-width: 430px;
+    margin: 0 auto;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--green-900);
+    color: white;
+    padding: 20px 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(15,76,58,.25);
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .app-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    letter-spacing: -0.3px;
+    line-height: 1;
+  }
+  .app-title span { color: var(--green-300); font-style: italic; }
+  .header-badge {
+    background: var(--green-700);
+    color: var(--green-100);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.2px;
+  }
+
+  /* ── DATE SELECTOR ── */
+  .date-strip {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    scrollbar-width: none;
+  }
+  .date-strip::-webkit-scrollbar { display: none; }
+  .date-chip {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all .2s ease;
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,.15);
+    color: rgba(255,255,255,.6);
+    min-width: 54px;
+  }
+  .date-chip .day-name { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+  .date-chip .day-num { font-size: 20px; font-weight: 300; line-height: 1; }
+  .date-chip.active {
+    background: var(--green-500);
+    border-color: var(--green-500);
+    color: white;
+    box-shadow: 0 4px 12px rgba(39,163,124,.4);
+  }
+  .date-chip.has-sessions::after {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--green-300);
+    margin-top: 2px;
+  }
+  .date-chip.active.has-sessions::after { background: rgba(255,255,255,.7); }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    padding: 20px 16px 100px;
+  }
+
+  /* ── DAY SUMMARY ── */
+  .day-summary {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .summary-pill {
+    flex: 1;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 12px 10px;
+    text-align: center;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+  }
+  .summary-pill .num {
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .summary-pill .label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); }
+  .summary-pill.green .num { color: var(--green-700); }
+  .summary-pill.amber .num { color: #b45309; }
+  .summary-pill.red .num { color: #b91c1c; }
+
+  /* ── SECTION TITLE ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  /* ── PATIENT CARD ── */
+  .patient-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .patient-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: box-shadow .2s;
+  }
+  .patient-card:focus-within { box-shadow: var(--shadow); }
+
+  .card-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .time-block {
+    flex: 0 0 auto;
+    text-align: center;
+    min-width: 44px;
+  }
+  .time-start { font-size: 15px; font-weight: 500; color: var(--text-primary); line-height: 1; }
+  .time-end { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .time-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+    margin: 4px auto 0;
+  }
+
+  .patient-info { flex: 1; min-width: 0; }
+  .patient-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+  .patient-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .meta-tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: var(--sand-100);
+    color: var(--text-secondary);
+    border: 1px solid var(--sand-300);
+  }
+
+  /* ── STATUS BUTTONS ── */
+  .status-row {
+    display: flex;
+    gap: 6px;
+    padding: 0 16px 12px;
+  }
+  .status-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 4px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--surface-2);
+    cursor: pointer;
+    transition: all .18s ease;
+    font-family: inherit;
+  }
+  .status-btn .icon { font-size: 16px; }
+  .status-btn .lbl { font-size: 10px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.2px; }
+
+  .status-btn.presente { border-color: #16a34a; background: #f0fdf4; }
+  .status-btn.presente .lbl { color: #16a34a; }
+
+  .status-btn.falta { border-color: #dc2626; background: #fef2f2; }
+  .status-btn.falta .lbl { color: #dc2626; }
+
+  .status-btn.justificou { border-color: #d97706; background: #fffbeb; }
+  .status-btn.justificou .lbl { color: #d97706; }
+
+  .status-btn:not(.presente, .falta, .justificou):hover {
+    background: var(--sand-100);
+    border-color: var(--sand-300);
+  }
+
+  /* ── STATUS INDICATOR ── */
+  .status-indicator {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .si-presente { background: #dcfce7; }
+  .si-falta { background: #fee2e2; }
+  .si-justificou { background: #fef3c7; }
+  .si-pending { background: var(--sand-200); }
+
+  /* ── EVOLUTION FIELD ── */
+  .evolution-area {
+    padding: 0 16px 14px;
+    display: none;
+  }
+  .evolution-area.open { display: block; }
+  .evo-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .evo-input {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--surface-2);
+    resize: vertical;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .evo-input:focus { border-color: var(--green-500); background: var(--surface); }
+  .evo-input::placeholder { color: var(--text-muted); }
+
+  /* ── SAVE BUTTON ── */
+  .save-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 11px;
+    margin-top: 8px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--green-900);
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.2px;
+    transition: all .18s;
+  }
+  .save-btn:hover { background: var(--green-800); }
+  .save-btn:active { transform: scale(.98); }
+  .save-btn.saving { opacity: .7; pointer-events: none; }
+  .save-btn.saved { background: #16a34a; }
+
+  /* ── EXPAND TOGGLE ── */
+  .expand-btn {
+    width: 100%;
+    padding: 7px 16px;
+    background: none;
+    border: none;
+    border-top: 1px dashed var(--border);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color .15s;
+  }
+  .expand-btn:hover { color: var(--green-700); }
+  .expand-btn .arrow { transition: transform .2s; font-size: 10px; }
+  .expand-btn.open .arrow { transform: rotate(180deg); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-muted);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: .5; }
+  .empty-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; color: var(--text-secondary); }
+  .empty-sub { font-size: 13px; }
+
+  /* ── CONFIG PANEL ── */
+  .config-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+  }
+  .config-overlay.open { display: flex; }
+  .config-sheet {
+    background: var(--surface);
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px 40px;
+    animation: slideUp .3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .config-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+  }
+  .config-field { margin-bottom: 16px; }
+  .config-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .config-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--surface-2);
+    outline: none;
+  }
+  .config-input:focus { border-color: var(--green-500); }
+  .config-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--green-900);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .config-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 16px;
+    line-height: 1.6;
+    background: var(--sand-50);
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--sand-200);
+  }
+  .config-hint code {
+    font-family: monospace;
+    background: var(--sand-200);
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 10px 0 20px;
+    z-index: 100;
+  }
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nav-btn .nav-icon { font-size: 22px; }
+  .nav-btn .nav-lbl { font-size: 10px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.2px; }
+  .nav-btn.active .nav-lbl { color: var(--green-700); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text-primary);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transition: all .3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 300;
+    box-shadow: var(--shadow-lg);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── LOADING ── */
+  .loading-bar {
+    height: 2px;
+    background: var(--green-500);
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 999;
+    transition: width .3s ease;
+    border-radius: 0 2px 2px 0;
+    box-shadow: 0 0 8px var(--green-500);
+  }
+
+  /* ── FINALIZED CARD ── */
+  .patient-card.finalized { opacity: .75; }
+  .patient-card.finalized .card-main { opacity: .9; }
+
+  .card-status-bar {
+    height: 3px;
+    width: 100%;
+  }
+  .csb-presente { background: #16a34a; }
+  .csb-falta { background: #dc2626; }
+  .csb-justificou { background: #d97706; }
+  .csb-pending { background: transparent; }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface: #1c1c1a;
+      --surface-2: #242422;
+      --text-primary: #f0ede8;
+      --text-secondary: #a0a09a;
+      --text-muted: #68686440;
+      --border: #2e2e2c;
+      --sand-100: #1a1a18;
+      --sand-200: #242420;
+      --sand-300: #303030;
+    }
+    body { background: #141412; }
+    .meta-tag { background: #2a2a28; border-color: #3a3a38; }
+    .evo-input { background: #1c1c1a; }
+    .bottom-nav { background: rgba(20,20,18,.92); }
+    .config-hint { background: #1c1c1a; }
+  }
+</style>
+</head>
+<body>
+
+<div class="loading-bar" id="loadingBar" style="width:0"></div>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div class="header-top">
+    <div class="app-title">Agenda <span>Clínica</span></div>
+    <div class="header-badge" id="therapistBadge">—</div>
+  </div>
+  <div class="date-strip" id="dateStrip"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="day-summary" id="daySummary" style="display:none">
+    <div class="summary-pill green">
+      <div class="num" id="countPresente">0</div>
+      <div class="label">Presentes</div>
+    </div>
+    <div class="summary-pill amber">
+      <div class="num" id="countJustificou">0</div>
+      <div class="label">Justificou</div>
+    </div>
+    <div class="summary-pill red">
+      <div class="num" id="countFalta">0</div>
+      <div class="label">Faltas</div>
+    </div>
+    <div class="summary-pill">
+      <div class="num" id="countTotal">0</div>
+      <div class="label">Total</div>
+    </div>
+  </div>
+
+  <div class="section-label" id="sectionLabel"></div>
+  <div class="patient-list" id="patientList"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-btn active" onclick="showView('agenda')">
+    <span class="nav-icon">📋</span>
+    <span class="nav-lbl">Agenda</span>
+  </button>
+  <button class="nav-btn" onclick="openConfig()">
+    <span class="nav-icon">⚙️</span>
+    <span class="nav-lbl">Configurar</span>
+  </button>
+</div>
+
+<!-- CONFIG OVERLAY -->
+<div class="config-overlay" id="configOverlay" onclick="closeConfigOutside(event)">
+  <div class="config-sheet">
+    <div class="config-title">Configuração</div>
+
+    <div class="config-field">
+      <div class="config-label">ID da Planilha (Google Sheets)</div>
+      <input class="config-input" id="sheetId" placeholder="Cole o ID da planilha aqui" type="text">
+    </div>
+
+    <div class="config-field">
+      <div class="config-label">Google API Key</div>
+      <input class="config-input" id="apiKey" placeholder="AIza..." type="text">
+    </div>
+
+    <div class="config-field">
+      <div class="config-label">Nome da aba de sessões</div>
+      <input class="config-input" id="sheetName" placeholder="Sessões" value="Sessões" type="text">
+    </div>
+
+    <div class="config-field">
+      <div class="config-label">Nome do terapeuta (para filtrar)</div>
+      <input class="config-input" id="therapistName" placeholder="Ex: Maria Cecilia" type="text">
+    </div>
+
+    <button class="config-btn" onclick="saveConfig()">Salvar e Carregar</button>
+
+    <div class="config-hint">
+      📌 Para obter o <strong>ID da planilha</strong>: abra o Google Sheets e copie o trecho entre <code>/d/</code> e <code>/edit</code> na URL.<br><br>
+      📌 Para a <strong>API Key</strong>: acesse <code>console.cloud.google.com</code> → Credenciais → Criar chave de API → ative a Google Sheets API.<br><br>
+      📌 A planilha deve ser <strong>compartilhada como leitora pública</strong> ou a API key deve ter acesso.
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────
+let config = {
+  sheetId: '',
+  apiKey: '',
+  sheetName: 'Sessões',
+  therapistName: ''
+};
+
+function loadConfig() {
+  try {
+    const saved = localStorage.getItem('clinicConfig');
+    if (saved) config = { ...config, ...JSON.parse(saved) };
+  } catch(e) {}
+}
+
+function saveConfig() {
+  config.sheetId = document.getElementById('sheetId').value.trim();
+  config.apiKey = document.getElementById('apiKey').value.trim();
+  config.sheetName = document.getElementById('sheetName').value.trim() || 'Sessões';
+  config.therapistName = document.getElementById('therapistName').value.trim();
+  localStorage.setItem('clinicConfig', JSON.stringify(config));
+  closeConfig();
+  updateBadge();
+  fetchData();
+}
+
+function openConfig() {
+  document.getElementById('sheetId').value = config.sheetId;
+  document.getElementById('apiKey').value = config.apiKey;
+  document.getElementById('sheetName').value = config.sheetName;
+  document.getElementById('therapistName').value = config.therapistName;
+  document.getElementById('configOverlay').classList.add('open');
+}
+function closeConfig() { document.getElementById('configOverlay').classList.remove('open'); }
+function closeConfigOutside(e) { if (e.target === document.getElementById('configOverlay')) closeConfig(); }
+
+// ─── STATE ────────────────────────────────────────────
+let allSessions = [];
+let selectedDate = null;
+let weekDates = [];
+
+// Local overrides before saving to sheets
+let localOverrides = {}; // key: rowIndex, value: { presenca, evolucao }
+
+function getOverride(idx) { return localOverrides[idx] || {}; }
+function setOverride(idx, key, val) {
+  if (!localOverrides[idx]) localOverrides[idx] = {};
+  localOverrides[idx][key] = val;
+  saveLocal();
+}
+
+function saveLocal() {
+  try { localStorage.setItem('localOverrides', JSON.stringify(localOverrides)); } catch(e) {}
+}
+function loadLocal() {
+  try {
+    const s = localStorage.getItem('localOverrides');
+    if (s) localOverrides = JSON.parse(s);
+  } catch(e) {}
+}
+
+// ─── DATE HELPERS ─────────────────────────────────────
+function isoDate(d) {
+  return d.toISOString().split('T')[0];
+}
+
+function buildWeek() {
+  const today = new Date();
+  const day = today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - (day === 0 ? 6 : day - 1));
+  weekDates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    weekDates.push(d);
+  }
+  if (!selectedDate) selectedDate = isoDate(today);
+}
+
+const DAY_NAMES = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+function renderDateStrip() {
+  const strip = document.getElementById('dateStrip');
+  strip.innerHTML = '';
+  const sessionDates = new Set(allSessions.map(s => s.date));
+  weekDates.forEach(d => {
+    const iso = isoDate(d);
+    const chip = document.createElement('button');
+    chip.className = 'date-chip' +
+      (iso === selectedDate ? ' active' : '') +
+      (sessionDates.has(iso) ? ' has-sessions' : '');
+    chip.innerHTML = `<span class="day-name">${DAY_NAMES[d.getDay()]}</span><span class="day-num">${d.getDate()}</span>`;
+    chip.onclick = () => { selectedDate = iso; renderAll(); };
+    strip.appendChild(chip);
+  });
+  // scroll active into view
+  setTimeout(() => {
+    const active = strip.querySelector('.active');
+    if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }, 50);
+}
+
+// ─── DATA FETCH ───────────────────────────────────────
+async function fetchData() {
+  if (!config.sheetId || !config.apiKey) {
+    renderEmpty('Configure a planilha primeiro', 'Toque em ⚙️ para inserir o ID da planilha e a API Key');
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const range = encodeURIComponent(`${config.sheetName}!A2:N200`);
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${config.sheetId}/values/${range}?key=${config.apiKey}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Erro ${res.status}`);
+    const data = await res.json();
+    parseRows(data.values || []);
+    renderAll();
+  } catch(e) {
+    renderEmpty('Erro ao carregar dados', e.message);
+    showToast('Erro: ' + e.message);
+  }
+  setLoading(false);
+}
+
+function parseRows(rows) {
+  allSessions = [];
+  rows.forEach((row, i) => {
+    if (!row[1]) return; // sem data
+    const rawDate = row[1];
+    let date = '';
+    if (rawDate.includes('-')) {
+      date = rawDate.split('T')[0].split(' ')[0];
+    } else {
+      // Excel serial or dd/mm/yyyy
+      try { date = new Date(rawDate).toISOString().split('T')[0]; } catch(e) {}
+    }
+    if (!date) return;
+
+    const override = getOverride(i + 2);
+    allSessions.push({
+      rowIndex: i + 2,
+      date,
+      timeStart: row[2] || '',
+      timeEnd:   row[3] || '',
+      duration:  row[4] || '',
+      patient:   row[5] || '—',
+      convenio:  row[6] || '',
+      tipo:      row[7] || '',
+      processo:  row[8] || '',
+      semana:    row[9] || '',
+      presenca:  override.presenca !== undefined ? override.presenca : (row[10] || ''),
+      evolucao:  override.evolucao !== undefined ? override.evolucao : (row[11] || ''),
+      status:    row[12] || '',
+    });
+  });
+}
+
+// ─── RENDER ───────────────────────────────────────────
+function renderAll() {
+  renderDateStrip();
+  const dayItems = allSessions.filter(s => s.date === selectedDate)
+    .sort((a, b) => a.timeStart.localeCompare(b.timeStart));
+
+  updateSummary(dayItems);
+
+  const list = document.getElementById('patientList');
+  const label = document.getElementById('sectionLabel');
+
+  if (dayItems.length === 0) {
+    list.innerHTML = '';
+    label.textContent = '';
+    document.getElementById('daySummary').style.display = 'none';
+    renderEmpty('Sem sessões neste dia', 'Selecione outro dia na barra acima.');
+    return;
+  }
+
+  label.textContent = `${dayItems.length} sessão${dayItems.length > 1 ? 'ões' : ''} agendada${dayItems.length > 1 ? 's' : ''}`;
+  document.getElementById('daySummary').style.display = 'flex';
+  list.innerHTML = '';
+
+  dayItems.forEach(session => {
+    list.appendChild(buildCard(session));
+  });
+}
+
+function buildCard(s) {
+  const card = document.createElement('div');
+  const presencaKey = (s.presenca || '').toLowerCase();
+  card.className = 'patient-card' + (s.presenca ? ' finalized' : '');
+  card.dataset.row = s.rowIndex;
+
+  const statusClass = presencaKey === 'presente' ? 'presente'
+    : presencaKey === 'falta' ? 'falta'
+    : presencaKey.includes('justif') ? 'justificou'
+    : 'pending';
+
+  const statusEmoji = statusClass === 'presente' ? '✅'
+    : statusClass === 'falta' ? '❌'
+    : statusClass === 'justificou' ? '⚠️'
+    : '○';
+
+  const tStart = formatTime(s.timeStart);
+  const tEnd   = formatTime(s.timeEnd);
+
+  card.innerHTML = `
+    <div class="card-status-bar csb-${statusClass}"></div>
+    <div class="card-main">
+      <div class="time-block">
+        <div class="time-start">${tStart}</div>
+        <div class="time-end">${tEnd}</div>
+        <div class="time-dot"></div>
+      </div>
+      <div class="patient-info">
+        <div class="patient-name">${s.patient}</div>
+        <div class="patient-meta">
+          ${s.convenio ? `<span class="meta-tag">${s.convenio}</span>` : ''}
+          ${s.duration ? `<span class="meta-tag">${s.duration}min</span>` : ''}
+          ${s.processo ? `<span class="meta-tag">${s.processo}</span>` : ''}
+        </div>
+      </div>
+      <div class="status-indicator si-${statusClass}">${statusEmoji}</div>
+    </div>
+    <div class="status-row">
+      <button class="status-btn ${statusClass === 'presente' ? 'presente' : ''}" onclick="setStatus(${s.rowIndex}, 'Presente', this)">
+        <span class="icon">✅</span><span class="lbl">Presente</span>
+      </button>
+      <button class="status-btn ${statusClass === 'justificou' ? 'justificou' : ''}" onclick="setStatus(${s.rowIndex}, 'Justificou', this)">
+        <span class="icon">⚠️</span><span class="lbl">Justificou</span>
+      </button>
+      <button class="status-btn ${statusClass === 'falta' ? 'falta' : ''}" onclick="setStatus(${s.rowIndex}, 'Falta', this)">
+        <span class="icon">❌</span><span class="lbl">Falta</span>
+      </button>
+    </div>
+    <button class="expand-btn" onclick="toggleEvolution(this, ${s.rowIndex})">
+      <span>📝 Evolução da sessão</span>
+      <span class="arrow">▼</span>
+    </button>
+    <div class="evolution-area" id="evo-${s.rowIndex}">
+      <div class="evo-label">Anotações / Evolução</div>
+      <textarea class="evo-input" placeholder="Descreva como foi a sessão, observações clínicas, próximos passos..." rows="4" oninput="draftEvolution(${s.rowIndex}, this.value)">${s.evolucao || ''}</textarea>
+      <button class="save-btn" onclick="saveSession(${s.rowIndex})">
+        <span>💾</span> Salvar sessão
+      </button>
+    </div>
+  `;
+
+  // Auto-open evolution if already has text
+  if (s.evolucao) {
+    setTimeout(() => {
+      const evoArea = card.querySelector('.evolution-area');
+      const expandBtn = card.querySelector('.expand-btn');
+      if (evoArea && expandBtn) {
+        evoArea.classList.add('open');
+        expandBtn.classList.add('open');
+      }
+    }, 0);
+  }
+
+  return card;
+}
+
+function formatTime(t) {
+  if (!t) return '—';
+  // Handle HH:MM:SS or HH:MM
+  const parts = t.split(':');
+  return `${parts[0]}:${parts[1] || '00'}`;
+}
+
+function renderEmpty(title, sub) {
+  document.getElementById('patientList').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon">📅</div>
+      <div class="empty-title">${title}</div>
+      <div class="empty-sub">${sub}</div>
+    </div>`;
+}
+
+// ─── INTERACTIONS ─────────────────────────────────────
+function setStatus(rowIdx, presenca, btn) {
+  setOverride(rowIdx, 'presenca', presenca);
+
+  // Update local session data
+  const session = allSessions.find(s => s.rowIndex === rowIdx);
+  if (session) session.presenca = presenca;
+
+  // Update card UI
+  const card = document.querySelector(`[data-row="${rowIdx}"]`);
+  if (!card) return;
+
+  // Update status buttons
+  card.querySelectorAll('.status-btn').forEach(b => {
+    b.classList.remove('presente', 'falta', 'justificou');
+  });
+  const cls = presenca.toLowerCase() === 'presente' ? 'presente'
+    : presenca.toLowerCase() === 'falta' ? 'falta' : 'justificou';
+  btn.classList.add(cls);
+
+  // Update indicator
+  const si = card.querySelector('.status-indicator');
+  si.className = 'status-indicator si-' + cls;
+  si.textContent = cls === 'presente' ? '✅' : cls === 'falta' ? '❌' : '⚠️';
+
+  // Update status bar
+  const bar = card.querySelector('.card-status-bar');
+  bar.className = 'card-status-bar csb-' + cls;
+
+  card.classList.add('finalized');
+  updateSummary(allSessions.filter(s => s.date === selectedDate));
+
+  // Auto-open evolution
+  const expandBtn = card.querySelector('.expand-btn');
+  const evoArea = card.querySelector('.evolution-area');
+  if (evoArea && !evoArea.classList.contains('open')) {
+    evoArea.classList.add('open');
+    expandBtn.classList.add('open');
+  }
+}
+
+function draftEvolution(rowIdx, val) {
+  setOverride(rowIdx, 'evolucao', val);
+  const session = allSessions.find(s => s.rowIndex === rowIdx);
+  if (session) session.evolucao = val;
+}
+
+function toggleEvolution(btn, rowIdx) {
+  btn.classList.toggle('open');
+  document.getElementById('evo-' + rowIdx).classList.toggle('open');
+}
+
+// ─── SAVE TO GOOGLE SHEETS ────────────────────────────
+async function saveSession(rowIdx) {
+  const session = allSessions.find(s => s.rowIndex === rowIdx);
+  if (!session) return;
+
+  const override = getOverride(rowIdx);
+  const presenca = override.presenca || session.presenca || '';
+  const evolucao = override.evolucao !== undefined ? override.evolucao : (session.evolucao || '');
+
+  const card = document.querySelector(`[data-row="${rowIdx}"]`);
+  const saveBtn = card?.querySelector('.save-btn');
+  if (saveBtn) { saveBtn.classList.add('saving'); saveBtn.textContent = '⏳ Salvando...'; }
+
+  if (!config.sheetId || !config.apiKey) {
+    showToast('Configure a planilha primeiro!');
+    if (saveBtn) { saveBtn.classList.remove('saving'); saveBtn.innerHTML = '<span>💾</span> Salvar sessão'; }
+    return;
+  }
+
+  try {
+    // Update Presença (col K = index 10) and Evolução (col L = index 11)
+    const presencaRange = `${config.sheetName}!K${rowIdx}`;
+    const evolucaoRange = `${config.sheetName}!L${rowIdx}`;
+
+    await updateCell(presencaRange, presenca);
+    await updateCell(evolucaoRange, evolucao);
+
+    // Mark status as Finalizado (col M = index 12)
+    const statusRange = `${config.sheetName}!M${rowIdx}`;
+    await updateCell(statusRange, 'Finalizado');
+
+    if (saveBtn) {
+      saveBtn.classList.remove('saving');
+      saveBtn.classList.add('saved');
+      saveBtn.innerHTML = '<span>✅</span> Salvo com sucesso!';
+      setTimeout(() => {
+        saveBtn.classList.remove('saved');
+        saveBtn.innerHTML = '<span>💾</span> Salvar sessão';
+      }, 2500);
+    }
+    showToast('Sessão salva com sucesso! ✅');
+  } catch(e) {
+    if (saveBtn) {
+      saveBtn.classList.remove('saving');
+      saveBtn.innerHTML = '<span>💾</span> Salvar sessão';
+    }
+    showToast('Erro ao salvar: ' + e.message);
+  }
+}
+
+async function updateCell(range, value) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${config.sheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED&key=${config.apiKey}`;
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ values: [[value]] })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+// ─── SUMMARY ─────────────────────────────────────────
+function updateSummary(items) {
+  const presente   = items.filter(s => (s.presenca || '').toLowerCase() === 'presente').length;
+  const falta      = items.filter(s => (s.presenca || '').toLowerCase() === 'falta').length;
+  const justificou = items.filter(s => (s.presenca || '').toLowerCase().includes('justif')).length;
+  document.getElementById('countPresente').textContent   = presente;
+  document.getElementById('countFalta').textContent      = falta;
+  document.getElementById('countJustificou').textContent = justificou;
+  document.getElementById('countTotal').textContent      = items.length;
+}
+
+// ─── UI HELPERS ───────────────────────────────────────
+function setLoading(on) {
+  const bar = document.getElementById('loadingBar');
+  bar.style.width = on ? '70%' : '100%';
+  if (!on) setTimeout(() => { bar.style.width = '0'; bar.style.transition = 'none'; setTimeout(() => bar.style.transition = '', 50); }, 400);
+}
+
+function showToast(msg, duration = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+function updateBadge() {
+  const b = document.getElementById('therapistBadge');
+  b.textContent = config.therapistName || 'Terapeuta';
+}
+
+// ─── DEMO MODE (offline) ──────────────────────────────
+function loadDemoData() {
+  const today = new Date();
+  const iso = isoDate(today);
+  allSessions = [
+    { rowIndex: 2, date: iso, timeStart: '08:00:00', timeEnd: '09:00:00', duration: '60', patient: 'Manuela do Espirito Santo', convenio: 'SulAmérica', tipo: 'AN', processo: 'Anamnese', presenca: 'Presente', evolucao: 'Hoje foi anamnese com os pais', status: 'Finalizado' },
+    { rowIndex: 3, date: iso, timeStart: '09:00:00', timeEnd: '09:30:00', duration: '30', patient: 'Ana Julia da Silva Melo', convenio: 'Unimed', tipo: '', processo: '', presenca: '', evolucao: '', status: 'Agendado' },
+    { rowIndex: 4, date: iso, timeStart: '09:30:00', timeEnd: '10:30:00', duration: '60', patient: 'Graziela Spina Cardoso', convenio: 'SulAmérica', tipo: '', processo: '', presenca: 'Falta', evolucao: '', status: 'Finalizado' },
+    { rowIndex: 5, date: iso, timeStart: '10:30:00', timeEnd: '11:00:00', duration: '30', patient: 'Simone C. Marques Preto', convenio: 'Unimed', tipo: '', processo: '', presenca: '', evolucao: '', status: 'Agendado' },
+    { rowIndex: 6, date: iso, timeStart: '11:00:00', timeEnd: '12:00:00', duration: '60', patient: 'Kawan Cavichiolli Almeida', convenio: 'SulAmérica', tipo: 'AN', processo: '', presenca: '', evolucao: '', status: 'Agendado' },
+    { rowIndex: 7, date: iso, timeStart: '13:00:00', timeEnd: '14:00:00', duration: '60', patient: 'Giovanna de Morais Affonso', convenio: 'Particular', tipo: 'AN', processo: '', presenca: '', evolucao: '', status: 'Agendado' },
+  ];
+}
+
+// ─── INIT ─────────────────────────────────────────────
+function init() {
+  loadConfig();
+  loadLocal();
+  buildWeek();
+  updateBadge();
+
+  if (!config.sheetId || !config.apiKey) {
+    // Load demo data so the user sees the UI working
+    loadDemoData();
+    renderAll();
+    setTimeout(() => showToast('🔧 Modo demonstração — configure a planilha em ⚙️'), 800);
+  } else {
+    fetchData();
+  }
+}
+
+init();
+</script>
+</body>
+</html>
