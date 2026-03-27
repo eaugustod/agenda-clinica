@@ -772,6 +772,9 @@ function updateBadge(){document.getElementById('thBadge').textContent=cfg.therap
 // ── INIT ──────────────────────────────────────────────────────────
 function init(){loadCfg();buildWeek();buildYears();updateBadge();switchView('agenda');fetchSessions();}
 init();
+  if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
 </script>
 </body>
 </html>
