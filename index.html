@@ -601,7 +601,6 @@ if (data.status === "ok") {
   throw new Error(data.error || "Erro desconhecido");
 }
     });
-}  
 
 function lockCard(row,presenca,evolucao){
   const sess=sessions.find(s=>s.row===row);
