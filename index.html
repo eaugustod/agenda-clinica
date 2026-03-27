@@ -584,13 +584,22 @@ async function saveSession(row){
       ]
     };
 
-    await fetch("https://script.google.com/macros/s/AKfycbwPyLn3IItc17PO-67etjsTBvAl6p-T0WCKYby5--S_oafiMdEd3EWoqQLoAAwKt7hm/exec", {
+const res = await fetch("https://agendaclinic.pages.dev/", {
   method: "POST",
-  mode: "no-cors",
-  body: new URLSearchParams({
-    data: JSON.stringify(payload)
-  })
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(payload)
 });
+
+const data = await res.json();
+
+if (data.status === "ok") {
+  lockCard(row,presenca,evolucao);
+  showToast('✅ Sessão salva com sucesso!');
+} else {
+  throw new Error(data.error || "Erro desconhecido");
+}
 
     const data = await res.json();
 
