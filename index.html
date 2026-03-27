@@ -584,24 +584,23 @@ async function saveSession(row){
       ]
     };
 
-    await fetch("https://script.google.com/macros/s/AKfycbwPyLn3IItc17PO-67etjsTBvAl6p-T0WCKYby5--S_oafiMdEd3EWoqQLoAAwKt7hm/exec", {
-      method: "POST",
-      mode: "no-cors",
-      
-      body: new URLSearchParams({
-      data: JSON.stringify(payload)
-      })
-    });
+    const res = await fetch("https://script.google.com/macros/s/AKfycbzyZYAOhf9XilVA21GwN_6fLrt8cDzlMQ2otTt8JOoL1EVJ3gCpJAwWfe012JPPzoAT/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(payload)
+});
 
-    lockCard(row,presenca,evolucao);
-    showToast('✅ Sessão salva com sucesso!');
-  }catch(e){
-    if(sv){
-      sv.classList.remove('sving');
-      sv.innerHTML='<span>💾</span> Salvar sessão';
-    }
-    showToast('Erro ao salvar: '+e.message);
-  }
+const data = await res.json();
+
+if (data.status === "ok") {
+  lockCard(row,presenca,evolucao);
+  showToast('✅ Sessão salva com sucesso!');
+} else {
+  throw new Error(data.error || "Erro desconhecido");
+}
+    });
 }  
 
 function lockCard(row,presenca,evolucao){
