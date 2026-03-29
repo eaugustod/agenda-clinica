@@ -334,7 +334,21 @@ function buildWeek(){
   mn.setDate(td.getDate()-(dy===0?6:dy-1));
   weekDates=[];
   for(let i=0;i<7;i++){const d=new Date(mn);d.setDate(mn.getDate()+i);weekDates.push(d);}
-  if(!selDate)selDate=iso(td);
+  if(!selDate) selDate = iso(td);
+
+// Se não tiver sessão na semana, muda para a semana das sessões
+if(sessions.length > 0){
+  const primeira = new Date(sessions[0].date);
+  const dy = primeira.getDay();
+  const mn = new Date(primeira);
+  mn.setDate(primeira.getDate() - (dy === 0 ? 6 : dy - 1));
+
+  weekDates = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(mn);
+    d.setDate(mn.getDate()+i);
+    weekDates.push(d);
+  }
 }
 function buildYears(){
   const s=document.getElementById('selAno'),cy=new Date().getFullYear();
