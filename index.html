@@ -306,6 +306,7 @@ function closeCfgOutside(e){if(e.target===document.getElementById('cov'))closeCf
 // ── STATE ─────────────────────────────────────────────────────────
 let sessions=[],selDate=null,weekDates=[],demoMode=false;
 const draftP={},draftE={};
+let baseDate = new Date();
 
 // ── VIEW SWITCHER ─────────────────────────────────────────────────
 function switchView(v){
@@ -336,25 +337,28 @@ function pDate(raw){
 }
 function fmtT(t){if(!t)return'—';const p=String(t).split(':');return`${p[0]}:${p[1]||'00'}`;}
 function buildWeek(){
-  const td=new Date(),dy=td.getDay(),mn=new Date(td);
-  mn.setDate(td.getDate()-(dy===0?6:dy-1));
-  weekDates=[];
-  for(let i=0;i<7;i++){const d=new Date(mn);d.setDate(mn.getDate()+i);weekDates.push(d);}
-  if(!selDate) selDate = iso(td);
+  const td = new Date(baseDate);
+  const dy = td.getDay();
+  const mn = new Date(td);
 
-// Se não tiver sessão na semana, muda para a semana das sessões
-if(sessions.length > 0){
-  const primeira = new Date(sessions[0].date);
-  const dy = primeira.getDay();
-  const mn = new Date(primeira);
-  mn.setDate(primeira.getDate() - (dy === 0 ? 6 : dy - 1));
+  mn.setDate(td.getDate() - (dy === 0 ? 6 : dy - 1));
 
   weekDates = [];
+
   for(let i=0;i<7;i++){
-    const d = new Date(mn);
+    const d=new Date(mn);
     d.setDate(mn.getDate()+i);
     weekDates.push(d);
   }
+
+  // Atualiza label da semana
+  const ini = weekDates[0];
+  const fim = weekDates[6];
+
+  document.getElementById("labelSemana").textContent =
+    `${ini.getDate()}/${ini.getMonth()+1} - ${fim.getDate()}/${fim.getMonth()+1}`;
+
+  if(!selDate) selDate = iso(td);
 }
 function buildYears(){
   const s=document.getElementById('selAno'),cy=new Date().getFullYear();
@@ -794,6 +798,17 @@ function init(){loadCfg();buildWeek();buildYears();updateBadge();switchView('age
 init();
   if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js');
+}
+function proximaSemana(){
+  baseDate.setDate(baseDate.getDate() + 7);
+  buildWeek();
+  renderAll();
+}
+
+function semanaAnterior(){
+  baseDate.setDate(baseDate.getDate() - 7);
+  buildWeek();
+  renderAll();
 }
 </script>
 </body>
