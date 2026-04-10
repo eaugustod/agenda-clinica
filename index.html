@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#0F4C3A">
-<title>Agenda Clínica</title>
+<title>Agenda Clínica v2.3</title>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
@@ -202,7 +202,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--s100);color:var(--tp);min
 <!-- HEADER -->
 <div class="hdr">
   <div class="htop">
-    <div class="atitle">Agenda <span>Clínica</span></div>
+    <div class="atitle">Agenda <span>Clínica v2.3</span></div>
     <div class="badge" id="thBadge">—</div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
@@ -246,6 +246,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--s100);color:var(--tp);min
   <div id="resumoCont"></div>
 </div>
 
+<!-- VIEW: EVOLUÇÃO PACIENTE -->
+<div class="view" id="vEvolucao">
+  <div id="boxEvolucao">
+    <div style="margin-bottom:12px;">
+      <select id="selPaciente" class="msel" onchange="carregarEvolucoes()">
+        <option value="">Selecione um paciente</option>
+      </select>
+    </div>
+
+    <div id="listaEvolucoes"></div>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bnav">
   <button class="nbtn act" id="nAg" onclick="switchView('agenda')">
@@ -253,6 +266,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--s100);color:var(--tp);min
   </button>
   <button class="nbtn" id="nRe" onclick="switchView('resumo')">
     <span class="nico">📊</span><span class="nlbl">Resumo</span>
+  </button>
+  <button class="nbtn" id="nEv" onclick="switchView('evolucao')">
+  <span class="nico">🧠</span><span class="nlbl">Evolução</span>
   </button>
   <button class="nbtn" id="nCf" onclick="openCfg()">
     <span class="nico">⚙️</span><span class="nlbl">Configurar</span>
@@ -310,6 +326,18 @@ let baseDate = new Date();
 
 // ── VIEW SWITCHER ─────────────────────────────────────────────────
 function switchView(v){
+ 
+  const box = document.getElementById('boxEvolucao');
+
+  // ESCONDE COMPLETAMENTE FORA DA VIEW
+  if(box) box.style.display = 'none';
+
+  // LIMPA
+  const lista = document.getElementById('listaEvolucoes');
+  const sel = document.getElementById('selPaciente');
+  if(lista) lista.innerHTML = '';
+  if(sel) sel.value = '';
+  
   ['vAgenda','vResumo'].forEach(id=>document.getElementById(id).classList.remove('act'));
   ['nAg','nRe','nCf'].forEach(id=>document.getElementById(id).classList.remove('act'));
   document.getElementById('dstrip').style.display='none';
@@ -318,11 +346,118 @@ function switchView(v){
     document.getElementById('vAgenda').classList.add('act');
     document.getElementById('nAg').classList.add('act');
     document.getElementById('dstrip').style.display='flex';
-  } else {
+  } else if(v==='resumo'){
     document.getElementById('vResumo').classList.add('act');
     document.getElementById('nRe').classList.add('act');
     document.getElementById('rhdr').style.display='block';
+  } else if(v==='evolucao'){
+    document.getElementById('vEvolucao').classList.add('act');
+    document.getElementById('nEv').classList.add('act');
+
+    if(box) box.style.display = 'block'; // só aparece aqui
+
+    preencherPacientes();
   }
+}
+
+// VERIFICA FALTAS
+function verificarFaltas(){
+  const mapa = {};
+
+  sessions.forEach(s => {
+    const nome = s.patient;
+    if(!nome || nome === '—') return;
+
+    if(!mapa[nome]) mapa[nome] = [];
+    mapa[nome].push(s);
+  });
+
+  const pacientesAlerta = [];
+
+  Object.entries(mapa).forEach(([nome, sessoes]) => {
+
+    // 🔹 filtrar apenas sessões ANTERIORES ao dia atual
+    const anteriores = sessoes
+      .filter(s => s.date < selDate)
+      .sort((a,b) => b.date.localeCompare(a.date)); // mais recente primeiro
+
+    // precisa ter pelo menos 2 anteriores
+    if(anteriores.length < 2) return;
+
+    const ultimas2 = anteriores.slice(0,2);
+
+    const s1 = (ultimas2[0].presenca || '').toLowerCase();
+    const s2 = (ultimas2[1].presenca || '').toLowerCase();
+
+    if(s1 === 'falta' && s2 === 'falta'){
+      pacientesAlerta.push({
+        nome,
+        faltas: 2
+      });
+    }
+
+  });
+
+  return pacientesAlerta;
+}
+
+
+// ── RENDER TELA FALTAS ──────────────────────────────────────────────────
+function renderAlertaFaltas(){
+  const alertas = verificarFaltas();
+
+  const containerId = 'alertaFaltasBox';
+
+  let box = document.getElementById(containerId);
+
+  if(!box){
+    box = document.createElement('div');
+    box.id = containerId;
+    box.style.marginBottom = '12px';
+    document.getElementById('vAgenda').prepend(box);
+  }
+
+  // 🔹 pacientes que TEM sessão no dia selecionado
+  const pacientesHoje = sessions
+    .filter(s => s.date === selDate)
+    .map(s => s.patient);
+
+  // 🔹 só mostra alerta se paciente está HOJE
+  const alertasHoje = alertas.filter(p => 
+    pacientesHoje.includes(p.nome)
+  );
+
+  if(alertasHoje.length === 0){
+    box.innerHTML = '';
+    return;
+  }
+
+  box.innerHTML = `
+    <div style="
+      background:#fef2f2;
+      border:1px solid #fecaca;
+      color:#7f1d1d;
+      padding:12px;
+      border-radius:10px;
+      font-size:13px;
+    ">
+      <strong>🚨 Atenção: paciente com faltas consecutivas</strong>
+      <ul style="margin-top:8px;padding-left:18px;">
+        ${alertasHoje.map(p => `
+          <li><strong>${p.nome}</strong> — 2 faltas consecutivas</li>
+        `).join('')}
+      </ul>
+    </div>
+  `;
+}
+
+// ── LIMPA TELA EVOLUÇÃO ──────────────────────────────────────────────────
+function limparEvolucao(){
+  const lista = document.getElementById('listaEvolucoes');
+  const sel = document.getElementById('selPaciente');
+
+  if(lista) lista.innerHTML = '';
+  if(sel) sel.value = '';
 }
 
 // ── DATE HELPERS ──────────────────────────────────────────────────
@@ -441,6 +576,7 @@ function renderAgenda(){
   pl.innerHTML='';
   if(demoMode){const b=document.createElement('div');b.className='demobanner';b.innerHTML='⚠️ <strong>Modo demonstração</strong> — dados fictícios. Toque em ⚙️ para conectar sua planilha.';pl.appendChild(b);}
   items.forEach(s=>pl.appendChild(buildCard(s)));
+  renderAlertaFaltas();
 }
 
 function buildCard(s){
@@ -745,6 +881,164 @@ function renderResumo(regs,mes,ano,mesNome){
   </div>`;
 }
 
+
+// ── LISTAR PACIENTES (DROPDOWN) ─────────────────────────────────────────────────────
+function preencherPacientes(){
+  const sel = document.getElementById('selPaciente');
+
+  const pacientes = [...new Set(
+    sessions.map(s => s.patient).filter(p => p && p !== '—')
+  )].sort();
+
+  sel.innerHTML = `<option value="">Selecione um paciente</option>` +
+    pacientes.map(p => `<option value="${p}">${p}</option>`).join('');
+}
+
+// ── MOSTRA EVOLUCOES ─────────────────────────────────────────────────────
+function carregarEvolucoes(){
+  const paciente = document.getElementById('selPaciente').value;
+  const lista = document.getElementById('listaEvolucoes');
+
+  if(!paciente){
+    lista.innerHTML = '';
+    return;
+  }
+
+  const evolucoes = sessions
+    .filter(s => 
+      s.patient === paciente && 
+      (
+        (s.evolucao && s.evolucao.trim() !== '') ||
+        (s.presenca && s.presenca !== '')
+      )
+    )
+    .sort((a,b) => b.date.localeCompare(a.date));
+
+  if(evolucoes.length === 0){
+    lista.innerHTML = `
+      <div class="empty">
+        <div class="empty-ico">📝</div>
+        <div class="empty-t">Sem registros</div>
+        <div class="empty-s">Nenhuma evolução, falta ou justificativa encontrada.</div>
+      </div>`;
+    return;
+  }
+
+  /*
+  lista.innerHTML = evolucoes.map(e => {
+
+  const status = (e.presenca || '').toLowerCase();
+
+  let statusLabel = '';
+  if(status === 'presente') statusLabel = '✅ Presente';
+  else if(status === 'falta') statusLabel = '❌ Falta';
+  else if(status.includes('justif')) statusLabel = '⚠️ Justificou';
+  else statusLabel = '—';
+
+  return `
+    <div style="
+      background: var(--sur);
+      border: 1px solid var(--bdr);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+    ">
+
+      <div style="
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        display: flex;
+        justify-content: space-between;
+      ">
+        <span>${e.date.split('-').reverse().join('/')}</span>
+        <span>${statusLabel}</span>
+      </div>
+
+      <div style="
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--tp);
+      ">
+        ${e.evolucao && e.evolucao.trim() !== '' 
+          ? e.evolucao 
+          : '<i>Sem evolução registrada</i>'}
+      </div>
+
+    </div>
+  `;
+}).join('');
+*/
+
+lista.innerHTML = `
+  <div style="position:relative;padding-left:20px;">
+    <div style="
+      position:absolute;
+      left:6px;
+      top:0;
+      bottom:0;
+      width:2px;
+      background:var(--bdr);
+    "></div>
+
+    ${evolucoes.map(e => {
+
+      const status = (e.presenca || '').toLowerCase();
+
+      let statusLabel = '';
+      let cor = '#999';
+
+      if(status === 'presente'){ statusLabel = 'Presente'; cor = '#16a34a'; }
+      else if(status === 'falta'){ statusLabel = 'Falta'; cor = '#dc2626'; }
+      else if(status.includes('justif')){ statusLabel = 'Justificou'; cor = '#d97706'; }
+
+      return `
+        <div style="position:relative;margin-bottom:18px;">
+
+          <!-- PONTO -->
+          <div style="
+            position:absolute;
+            left:-14px;
+            top:4px;
+            width:10px;
+            height:10px;
+            border-radius:50%;
+            background:${cor};
+          "></div>
+
+          <!-- CABEÇALHO -->
+          <div style="
+            font-size:13px;
+            font-weight:600;
+            margin-bottom:4px;
+            display:flex;
+            justify-content:space-between;
+          ">
+            <span>${e.date.split('-').reverse().join('/')}</span>
+            <span style="color:${cor}">${statusLabel || '—'}</span>
+          </div>
+
+          <!-- TEXTO -->
+          <div style="
+            font-size:14px;
+            line-height:1.5;
+            color:var(--tp);
+            background:var(--sur);
+            border:1px solid var(--bdr);
+            border-radius:10px;
+            padding:10px;
+          ">
+            ${e.evolucao && e.evolucao.trim() !== '' 
+              ? e.evolucao 
+              : '<i>Sem evolução registrada</i>'}
+          </div>
+
+        </div>
+      `;
+    }).join('')}
+  </div>
+`;
+}
 // ── DEMO DATA ─────────────────────────────────────────────────────
 function loadDemo(){
   const d=iso(new Date());
