@@ -993,7 +993,8 @@ async function salvarHistoricoSupabase(sess, presenca, evolucao){
         convenio:sess.conv,
         presenca:presenca
       },
-      prof_id: profissionalId || null
+      prof_id: profissionalId || null,
+      status: presenca.toLowerCase()
     };
 
     if(dados.length > 0){
